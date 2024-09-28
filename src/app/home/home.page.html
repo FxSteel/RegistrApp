@@ -1,20 +1,34 @@
-<ion-header [translucent]="true">
+<ion-header>
   <ion-toolbar>
-    <ion-title>
-      Blank
-    </ion-title>
+    <ion-title>-- HOME --</ion-title>
+    <ion-buttons slot="end">
+      <ion-button class="botonmio" (click)="logout()">
+        <ion-icon slot="icon-only" name="log-out-outline"></ion-icon>
+      </ion-button>
+
+      <!-- Botón de resumen de asistencia para profesores con icono -->
+      <ion-button class="botonmio" *ngIf="role === 'profesor'" (click)="goToResumenAsistencia()">
+        <ion-icon slot="icon-only" name="document-text-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
-    </ion-toolbar>
-  </ion-header>
-
-  <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
+<ion-content class="ion-padding">
+  <div class="welcome">
+    <h2>Bienvenido {{ username }}</h2>
+    <ion-button class="botonmio" *ngIf="role === 'profesor'" (click)="generateQRCode()">Generar Código QR</ion-button>
+    <ion-button class="botonmio" *ngIf="role === 'alumno'" (click)="scanQRCode()">Escanear Código QR</ion-button>
   </div>
+
+  <!-- Logo -->
+  <div class="logo-container">
+    <img src="assets/LogoRegistrApp.png" alt="Logo" class="logo" />
+  </div>
+
+  <!-- Mostrar la imagen QR cuando se genera el código QR -->
+  <div *ngIf="showQRCode" class="qr-container">
+    <img src="assets/qr-code.png" alt="Código QR" class="qr-image"/>
+  </div>
+
 </ion-content>

@@ -1,0 +1,22 @@
+ion-card {
+    margin-bottom: 15px;
+  }
+  
+  ion-card-header {
+    background-color: #f8f8f8;
+  }
+  
+  ion-card-title {
+    font-size: 1.2em;
+  }
+  
+  ion-card-content {
+    display: flex;
+    align-items: center;
+    font-size: 1em;
+  
+    ion-icon {
+      margin-right: 10px;
+    }
+  }
+  

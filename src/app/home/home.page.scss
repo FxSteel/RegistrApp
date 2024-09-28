@@ -25,3 +25,45 @@
 #container a {
   text-decoration: none;
 }
+.welcome{
+  text-align: center;
+}
+
+.botonmio{
+  --background: #bfa575;
+  --background-activated: #bfa575;
+  --background-focused: #bfa575;
+  --background-hover: #bfa575;
+  --color: white; /* color del texto */
+}
+
+//Logo
+.logo-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+  position: absolute;
+  bottom: 20px;
+  left: 0;
+  right: 0;
+}
+
+.logo {
+  max-width: 100px;
+  height: auto;
+}
+
+// Imagen QR de prueba
+.qr-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  margin-top: -60px;
+}
+
+.qr-image {
+  width: 200px;
+  height: 200px;
+}

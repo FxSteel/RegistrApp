@@ -1,0 +1,52 @@
+//clase para los labels
+.labelColor{
+    color: #bfa575;
+}
+.welcome{
+    text-align: center;
+}
+
+//clase del boton
+.centered-button {
+    --background: #bfa575;
+    --background-activated: #bfa575;
+    --background-focused: #bfa575;
+    --background-hover: #bfa575;
+    --color: white; /* color del texto */
+    
+    border-radius: 25px; /* Redondear las esquinas */
+    width: 80%; /* Ajustar el ancho*/
+    max-width: 300px; /* Limita el ancho máximo */
+    padding: 10px; /* Espaciado interno */
+  
+    display: block; /* Permite que el botón se comporte como un bloque */
+    margin: 0 auto; /* Centra el botón horizontalmente */
+    position: relative; /* Esto es para poder usar `top` */
+    top: 5%; /* Centrar verticalmente */
+}
+  
+.footer-image {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    position: absolute;
+    bottom: 20px;
+    left: 0;
+    right: 0;
+}
+
+.logo-container {
+    display: flex; /* Usar flexbox */
+    justify-content: center; /* Centra horizontalmente */
+    align-items: center; /* Centra verticalmente */
+    height: 50vh; /* Altura del contenedor */
+}
+  
+.logo-container img {
+    max-width: 100%;
+    height: auto;
+}
+  
+  
+  

@@ -1,0 +1,34 @@
+// clase para el color de los botones
+.botonmio {
+    --background: #bfa575;
+    --background-activated: #bfa575;
+    --background-focused: #bfa575;
+    --background-hover: #bfa575;
+    --color: white; /* color del texto */
+}
+//clase para los labels
+.labelColor{
+    color: #bfa575;
+}
+
+//clase del color de la flecha
+ion-back-button {
+    --color: #bfa575;
+}
+
+//Logo
+.logo-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    position: absolute;
+    bottom: 20px;
+    left: 0;
+    right: 0;
+}
+  
+.logo {
+    max-width: 100px;
+    height: auto;
+}
