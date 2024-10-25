@@ -24,7 +24,6 @@ export class HomePage implements OnInit {
       this.username = this.authService.getUsername() || '';
       this.role = this.authService.getRole();
     } else {
-      // Si el usuario no está logeado, redirigir al login
       this.router.navigate(['/login']);
     }
   }
@@ -44,12 +43,22 @@ export class HomePage implements OnInit {
     this.router.navigate(['/attendance-summary']);
   }
 
-  // Generar código QR en caso de ser profesor
   generateQRCode() {
-    this.showQRCode = true;  // Mostrar la imagen del QR
+    this.showQRCode = true;
   }
 
+  // Nueva función para escanear QR (puedes agregar la lógica de escaneo aquí)
   scanQRCode() {
-    // Lógica para escanear el código QR en caso de ser alumno
+    console.log('Escaneo de código QR iniciado');
+    // Implementa aquí la lógica de escaneo de QR si es necesario
+  }
+
+  // Nueva función para proyectar el QR
+  projectQRCode() {
+    this.alertController.create({
+      header: 'Proyectar QR',
+      message: 'Código QR proyectado en pantalla.',
+      buttons: ['OK']
+    }).then(alert => alert.present());
   }
 }

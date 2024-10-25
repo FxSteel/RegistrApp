@@ -4,7 +4,11 @@ import { Injectable } from '@angular/core';
   providedIn: 'root',
 })
 export class AuthService {
-  private users: { [username: string]: { password: string; role: 'alumno' | 'profesor' } } = {};
+  private users: { [username: string]: { password: string; role: 'alumno' | 'profesor' } } = {
+    // Usuarios predeterminados
+    'admin': { password: 'admin', role: 'profesor' },
+    'root': { password: 'root', role: 'alumno' }
+  };
   private loggedInUser: string | null = null;
   private userRole: 'alumno' | 'profesor' | null = null;
 
@@ -49,6 +53,4 @@ export class AuthService {
     }
     return false;
   }
-  
-  
 }

@@ -29,5 +29,6 @@
   <!-- Mostrar la imagen QR cuando se genera el código QR -->
   <div *ngIf="showQRCode" class="qr-container">
     <img src="assets/qr-code.png" alt="Código QR" class="qr-image"/>
+    <ion-button class="botonmio" (click)="projectQRCode()">Proyectar QR</ion-button>
   </div>
 </ion-content>

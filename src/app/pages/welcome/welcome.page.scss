@@ -8,24 +8,20 @@
 
 //clase del boton
 .centered-button {
+        
     --background: #bfa575;
-    --background-activated: #bfa575;
-    --background-focused: #bfa575;
-    --background-hover: #bfa575;
     --color: white; /* color del texto */
-    
     border-radius: 25px; /* Redondear las esquinas */
-    width: 80%; /* Ajustar el ancho*/
-    max-width: 300px; /* Limita el ancho máximo */
-    padding: 10px; /* Espaciado interno */
-  
-    display: block; /* Permite que el botón se comporte como un bloque */
-    margin: 0 auto; /* Centra el botón horizontalmente */
-    position: relative; /* Esto es para poder usar `top` */
-    top: 5%; /* Centrar verticalmente */
+    width: 80%;
+    max-width: 300px;
+    padding: 10px;
+    display: block;
+    margin: 20px auto; /* Espaciado para que no se superponga con el footer */
+    text-align: center; /* Centrar el texto */
 }
-  
+
 .footer-image {
+
     display: flex;
     justify-content: center;
     align-items: center;
@@ -37,6 +33,7 @@
 }
 
 .logo-container {
+
     display: flex; /* Usar flexbox */
     justify-content: center; /* Centra horizontalmente */
     align-items: center; /* Centra verticalmente */
@@ -44,9 +41,18 @@
 }
   
 .logo-container img {
+
     max-width: 100%;
     height: auto;
 }
-  
+
+ion-content {
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
   
   

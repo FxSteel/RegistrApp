@@ -57,13 +57,12 @@
 // Imagen QR de prueba
 .qr-container {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-  margin-top: -60px;
+  flex-direction: column; //mostrar como columna
+  align-items: center;    //contralizarlo a la pantalla
+  margin-top: 20px;
 }
 
 .qr-image {
-  width: 200px;
-  height: 200px;
+  width: 200px; //tamaño del QR
+  margin-bottom: 15px;  //Espacio entre el QR y el botón
 }

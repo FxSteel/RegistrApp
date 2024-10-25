@@ -9,6 +9,7 @@ const routes: Routes = [
   { path: 'reset-password', loadChildren: () => import('./pages/reset-password/reset-password.module').then(m => m.ResetPasswordPageModule) },
   {path: 'welcome', loadChildren: () => import('./pages/welcome/welcome.module').then( m => m.WelcomePageModule) },
   {path: 'resumen-asistencia',loadChildren: () => import('./pages/resumen-asistencia/resumen-asistencia.module').then( m => m.ResumenAsistenciaPageModule)},
+  {path: '**', redirectTo: 'welcome'}, //ruta 404
 ];
 
 @NgModule({
