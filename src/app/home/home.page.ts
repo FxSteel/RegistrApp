@@ -11,7 +11,12 @@ import { AlertController } from '@ionic/angular';
 export class HomePage implements OnInit {
   username: string = '';
   role: 'alumno' | 'profesor' | null = null;
-  showQRCode: boolean = false;  // Controla la visibilidad del QR
+  showQRCode: boolean = false;
+  asignaturas: { nombre: string, expanded: boolean }[] = [
+    { nombre: 'Arquitectura de Software', expanded: false },
+    { nombre: 'Prog. App Moviles', expanded: false },
+    { nombre: 'Diseño de Software', expanded: false }
+  ];
 
   constructor(
     private authService: AuthService,
@@ -47,13 +52,23 @@ export class HomePage implements OnInit {
     this.showQRCode = true;
   }
 
-  // Nueva función para escanear QR (puedes agregar la lógica de escaneo aquí)
-  scanQRCode() {
-    console.log('Escaneo de código QR iniciado');
-    // Implementa aquí la lógica de escaneo de QR si es necesario
+  scanQRCode(asignatura: string) {
+    console.log(`Escaneando QR para ${asignatura}`);
+    // Lógica para validar el QR en algún momento si es necesario
   }
 
-  // Nueva función para proyectar el QR
+  toggleExpand(asignatura: any) {
+    // Cerrar cualquier tarjeta previamente expandida
+    this.asignaturas.forEach(a => {
+      if (a !== asignatura) {
+        a.expanded = false;
+      }
+    });
+
+    // Alternar la expansión de la tarjeta seleccionada
+    asignatura.expanded = !asignatura.expanded;
+  }
+
   projectQRCode() {
     this.alertController.create({
       header: 'Proyectar QR',

@@ -5,11 +5,6 @@
       <ion-button class="botonmio" (click)="logout()">
         <ion-icon slot="icon-only" name="log-out-outline"></ion-icon>
       </ion-button>
-
-      <!-- Botón de resumen de asistencia para profesores con icono -->
-      <ion-button class="botonmio" *ngIf="role === 'profesor'" (click)="goToResumenAsistencia()">
-        <ion-icon slot="icon-only" name="document-text-outline"></ion-icon>
-      </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
@@ -17,8 +12,26 @@
 <ion-content class="ion-padding">
   <div class="welcome">
     <h2>Bienvenido {{ username }}</h2>
-    <ion-button class="botonmio" *ngIf="role === 'profesor'" (click)="generateQRCode()">Generar Código QR</ion-button>
-    <ion-button class="botonmio" *ngIf="role === 'alumno'" (click)="scanQRCode()">Escanear Código QR</ion-button>
+  </div>
+
+  <!-- Botón de Generar QR solo para profesores -->
+  <div *ngIf="role === 'profesor'">
+    <ion-button class="botonmio" expand="full" (click)="generateQRCode()">Generar Código QR</ion-button>
+  </div>
+
+  <!-- Tarjetas de asignaturas solo para alumnos -->
+  <div *ngIf="role === 'alumno'">
+    <h3>Selección de ramos</h3>
+    <ion-card *ngFor="let asignatura of asignaturas">
+      <ion-card-header (click)="toggleExpand(asignatura)">
+        <ion-card-title>{{ asignatura.nombre }}</ion-card-title>
+      </ion-card-header>
+
+      <ion-card-content *ngIf="asignatura.expanded">
+        <p>Toma de asistencia para: {{ asignatura.nombre }}</p>
+        <ion-button class="botonmio" expand="full" (click)="scanQRCode(asignatura.nombre)">Escanear QR</ion-button>
+      </ion-card-content>
+    </ion-card>
   </div>
 
   <!-- Logo -->
