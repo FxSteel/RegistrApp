@@ -3,6 +3,7 @@ import { AuthService } from '../services/auth.service';
 import { Router } from '@angular/router';
 import { AlertController } from '@ionic/angular';
 import { ZXingScannerComponent } from '@zxing/ngx-scanner';
+import { WeatherService } from '../services/weather.service';
 
 @Component({
   selector: 'app-home',
@@ -14,7 +15,9 @@ export class HomePage implements OnInit {
   username: string = '';
   role: 'alumno' | 'profesor' | null = null;
   showQRCode: boolean = false;
-  isScanning: boolean = false;  // Controla la visualización del escáner QR
+  isScanning: boolean = false;
+  weatherData: any;
+
   asignaturas: { nombre: string, expanded: boolean }[] = [
     { nombre: 'Arquitectura de Software', expanded: false },
     { nombre: 'Prog. App Moviles', expanded: false },
@@ -24,16 +27,25 @@ export class HomePage implements OnInit {
   constructor(
     private authService: AuthService,
     private router: Router,
-    private alertController: AlertController
+    private alertController: AlertController,
+    private weatherService: WeatherService
   ) {}
 
   ngOnInit() {
     if (this.authService.isLoggedIn()) {
       this.username = this.authService.getUsername() || '';
       this.role = this.authService.getRole();
+      this.loadWeather('Santiago'); // Llama a la función de clima con una ciudad
     } else {
       this.router.navigate(['/login']);
     }
+  }
+
+  loadWeather(city: string) {
+    this.weatherService.getWeather(city).subscribe(
+      data => this.weatherData = data,
+      error => console.error('Error al obtener el clima:', error)
+    );
   }
 
   async logout() {
@@ -55,15 +67,14 @@ export class HomePage implements OnInit {
     this.showQRCode = true;
   }
 
-  // Función para iniciar el escaneo
   startScanning() {
     this.isScanning = true;
   }
 
   stopScanning() {
-    this.isScanning = false;  // Detiene el escaneo estableciendo isScanning en false
+    this.isScanning = false;
     if (this.scanner) {
-      this.scanner.reset();  // Asegura que el escáner libere la cámara
+      this.scanner.reset();
     }
   }
 
@@ -74,7 +85,7 @@ export class HomePage implements OnInit {
       message: `Código escaneado para ${asignatura}: ${result}`,
       buttons: ['OK']
     }).then(alert => alert.present());
-    this.isScanning = false;  // Desactiva el escáner después de obtener el resultado
+    this.isScanning = false;
   }
 
   toggleExpand(asignatura: any) {
@@ -99,5 +110,4 @@ export class HomePage implements OnInit {
       this.router.navigate(['/profile']);
     }
   }
-
 }
