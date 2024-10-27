@@ -1,0 +1,49 @@
+// Estilo para los labels en la página de perfil
+.labelColor {
+  color: #bfa575 !important;
+
+  &.shrink {
+      font-size: 0.9em;
+      color: #bfa575 !important;
+  }
+}
+
+// Estilos para centrar y dar formato a la tarjeta de perfil
+.profile-card {
+  max-width: 400px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.profile-picture {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.profile-picture img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+}
+
+.edit-icon {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background-color: #bfa575;
+  border-radius: 50%;
+  padding: 5px;
+  color: white;
+  cursor: pointer;
+  font-size: 1.2em;
+}
+
+.button-container {
+  display: flex;
+  justify-content: space-between;
+  margin: 20px auto;
+  max-width: 300px;
+}
