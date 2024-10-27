@@ -8,6 +8,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { FormsModule } from '@angular/forms';
 import { IonicStorageModule } from '@ionic/storage-angular';
 import { ZXingScannerModule } from '@zxing/ngx-scanner';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [AppComponent],
@@ -17,7 +18,8 @@ import { ZXingScannerModule } from '@zxing/ngx-scanner';
     AppRoutingModule,
     FormsModule,
     IonicStorageModule.forRoot(),
-    ZXingScannerModule
+    ZXingScannerModule,
+    HttpClientModule
   ],
   providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }],
   bootstrap: [AppComponent],

@@ -2,62 +2,63 @@
   <ion-toolbar>
     <ion-title>-- HOME --</ion-title>
     <ion-buttons slot="end">
-
-      <!-- Botón de cerrar sesión -->
       <ion-button class="botonmio" (click)="logout()">
         <ion-icon slot="icon-only" name="log-out-outline"></ion-icon>
       </ion-button>
-
-      <!-- Botón de perfil solo para alumnos -->
       <ion-button *ngIf="role === 'alumno'" class="botonmio" (click)="goToProfile()">
         <ion-icon slot="icon-only" name="person-circle-outline"></ion-icon>
       </ion-button>
-      
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding" [style.padding-bottom.px]="isScanning ? 80 : 16">
-  <div class="welcome">
-    <h2>Bienvenido {{ username }}</h2>
-  </div>
+<ion-content class="ion-padding">
+  <div class="scrollable-content">
+    <div class="welcome">
+      <h2>Bienvenido {{ username }}</h2>
+    </div>
 
-  <!-- Botón de Generar QR solo para profesores -->
-  <div *ngIf="role === 'profesor'">
-    <ion-button class="botonmio" expand="full" (click)="generateQRCode()">Generar Código QR</ion-button>
-  </div>
-
-  <!-- Tarjetas de asignaturas solo para alumnos -->
-  <div *ngIf="role === 'alumno'">
-    <h3>Selección de ramos</h3>
-    <ion-card *ngFor="let asignatura of asignaturas">
-      <ion-card-header (click)="toggleExpand(asignatura)">
-        <ion-card-title>{{ asignatura.nombre }}</ion-card-title>
+    <!-- Tarjeta del clima -->
+    <ion-card *ngIf="weatherData" class="weather-card">
+      <ion-card-header>
+        <ion-card-title>Clima en {{ weatherData.location.name }}</ion-card-title>
       </ion-card-header>
-
-      <ion-card-content *ngIf="asignatura.expanded">
-        <p>Toma de asistencia para: {{ asignatura.nombre }}</p>
-        <!-- Botón para activar el escáner QR -->
-        <ion-button class="botonmio" expand="full" (click)="startScanning()">Escanear QR</ion-button>
-
-        <!-- Mostrar el escáner solo si isScanning es verdadero -->
-        <div *ngIf="isScanning">
-          <zxing-scanner (scanSuccess)="onCodeResult($event, asignatura.nombre)"></zxing-scanner>
-          <!-- Botón para cancelar el escaneo -->
-          <ion-button class="botonmio" color="danger" expand="full" (click)="stopScanning()">Cancelar</ion-button>
-        </div>
+      <ion-card-content>
+        <p>Temperatura: {{ weatherData.current.temp_c }}°C</p>
+        <p>Condición: {{ weatherData.current.condition.text }}</p>
+        <img [src]="weatherData.current.condition.icon" alt="Icono del clima">
       </ion-card-content>
     </ion-card>
+    <div *ngIf="!weatherData">
+      <p>Cargando el clima...</p>
+    </div>
+
+    <!-- Botón de Generar QR solo para profesores -->
+    <div *ngIf="role === 'profesor'">
+      <ion-button class="botonmio" expand="full" (click)="generateQRCode()">Generar Código QR</ion-button>
+    </div>
+
+    <!-- Tarjetas de asignaturas solo para alumnos -->
+    <div *ngIf="role === 'alumno'">
+      <h3>Selección de ramos</h3>
+      <ion-card *ngFor="let asignatura of asignaturas">
+        <ion-card-header (click)="toggleExpand(asignatura)">
+          <ion-card-title>{{ asignatura.nombre }}</ion-card-title>
+        </ion-card-header>
+        <ion-card-content *ngIf="asignatura.expanded">
+          <p>Toma de asistencia para: {{ asignatura.nombre }}</p>
+          <ion-button class="botonmio" expand="full" (click)="startScanning()">Escanear QR</ion-button>
+          <div *ngIf="isScanning">
+            <zxing-scanner (scanSuccess)="onCodeResult($event, asignatura.nombre)"></zxing-scanner>
+            <ion-button class="botonmio" color="danger" expand="full" (click)="stopScanning()">Cancelar</ion-button>
+          </div>
+        </ion-card-content>
+      </ion-card>
+    </div>
   </div>
 
-  <!-- Logo, oculto si el escáner está activo -->
-  <div class="logo-container" *ngIf="!isScanning">
+  <!-- Logo en el pie de página, no desplazable -->
+  <div class="logo-footer">
     <img src="assets/LogoRegistrApp.png" alt="Logo" class="logo" />
-  </div>
-
-  <!-- Mostrar la imagen QR cuando se genera el código QR -->
-  <div *ngIf="showQRCode" class="qr-container">
-    <img src="assets/qr-code.png" alt="Código QR" class="qr-image"/>
-    <ion-button class="botonmio" (click)="projectQRCode()">Proyectar QR</ion-button>
   </div>
 </ion-content>
