@@ -1,4 +1,3 @@
-// login.page.ts
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
@@ -11,13 +10,34 @@ import { AuthService } from '../../services/auth.service';
 export class LoginPage {
   username: string = '';
   password: string = '';
+  isUsernameFocused: boolean = false;
+  isPasswordFocused: boolean = false;
 
   constructor(private authService: AuthService, private router: Router) {}
 
   ionViewWillEnter() {
-    // Limpiar los campos de usuario y contraseña cada vez que se accede a la página
     this.username = '';
     this.password = '';
+  }
+
+  onUsernameFocus() {
+    this.isUsernameFocused = true;
+  }
+
+  onUsernameBlur() {
+    if (!this.username) {
+      this.isUsernameFocused = false;
+    }
+  }
+
+  onPasswordFocus() {
+    this.isPasswordFocused = true;
+  }
+
+  onPasswordBlur() {
+    if (!this.password) {
+      this.isPasswordFocused = false;
+    }
   }
 
   login() {
