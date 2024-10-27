@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { AuthService } from '../services/auth.service';
 import { Router } from '@angular/router';
 import { AlertController } from '@ionic/angular';
+import { ZXingScannerComponent } from '@zxing/ngx-scanner';
 
 @Component({
   selector: 'app-home',
@@ -9,9 +10,11 @@ import { AlertController } from '@ionic/angular';
   styleUrls: ['./home.page.scss'],
 })
 export class HomePage implements OnInit {
+  @ViewChild(ZXingScannerComponent) scanner: ZXingScannerComponent | undefined;
   username: string = '';
   role: 'alumno' | 'profesor' | null = null;
   showQRCode: boolean = false;
+  isScanning: boolean = false;  // Controla la visualización del escáner QR
   asignaturas: { nombre: string, expanded: boolean }[] = [
     { nombre: 'Arquitectura de Software', expanded: false },
     { nombre: 'Prog. App Moviles', expanded: false },
@@ -52,20 +55,35 @@ export class HomePage implements OnInit {
     this.showQRCode = true;
   }
 
-  scanQRCode(asignatura: string) {
-    console.log(`Escaneando QR para ${asignatura}`);
-    // Lógica para validar el QR en algún momento si es necesario
+  // Función para iniciar el escaneo
+  startScanning() {
+    this.isScanning = true;
+  }
+
+  // Función para detener el escaneo y detener el escáner QR
+  stopScanning() {
+    if (this.scanner) {
+      this.scanner.reset();  // Detiene el escáner
+    }
+    this.isScanning = false;
+  }
+
+  onCodeResult(result: string, asignatura: string) {
+    console.log(`Código escaneado para ${asignatura}:`, result);
+    this.alertController.create({
+      header: 'Escaneo Completo',
+      message: `Código escaneado para ${asignatura}: ${result}`,
+      buttons: ['OK']
+    }).then(alert => alert.present());
+    this.isScanning = false;  // Desactiva el escáner después de obtener el resultado
   }
 
   toggleExpand(asignatura: any) {
-    // Cerrar cualquier tarjeta previamente expandida
     this.asignaturas.forEach(a => {
       if (a !== asignatura) {
         a.expanded = false;
       }
     });
-
-    // Alternar la expansión de la tarjeta seleccionada
     asignatura.expanded = !asignatura.expanded;
   }
 
