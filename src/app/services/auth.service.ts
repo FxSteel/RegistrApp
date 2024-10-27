@@ -5,28 +5,37 @@ import { Injectable } from '@angular/core';
 })
 export class AuthService {
   private users: { [username: string]: { password: string; role: 'alumno' | 'profesor' } } = {
-    // Usuarios predeterminados
     'admin': { password: 'admin', role: 'profesor' },
     'root': { password: 'root', role: 'alumno' }
   };
   private loggedInUser: string | null = null;
   private userRole: 'alumno' | 'profesor' | null = null;
 
+  constructor() {
+    // Cargar datos de localStorage al inicializar el servicio
+    this.loggedInUser = localStorage.getItem('loggedInUser');
+    this.userRole = localStorage.getItem('userRole') as 'alumno' | 'profesor' | null;
+  }
+
   register(username: string, password: string, role: 'alumno' | 'profesor'): boolean {
     if (this.users[username]) {
       return false; // Usuario ya existe
     }
-    this.users[username] = { password, role }; // Guardar usuario y rol
-    return true; // Registro exitoso
+    this.users[username] = { password, role };
+    return true;
   }
 
   authenticate(username: string, password: string): boolean {
     if (this.users[username]?.password === password) {
-      this.loggedInUser = username; // Establecer usuario logueado
-      this.userRole = this.users[username].role; // Establecer rol del usuario
-      return true; // Autenticación exitosa
+      this.loggedInUser = username;
+      this.userRole = this.users[username].role;
+
+      // Guardar en localStorage
+      localStorage.setItem('loggedInUser', username);
+      localStorage.setItem('userRole', this.userRole);
+      return true;
     }
-    return false; // Autenticación fallida
+    return false;
   }
 
   isLoggedIn(): boolean {
@@ -42,8 +51,10 @@ export class AuthService {
   }
 
   clear(): void {
-    this.loggedInUser = null; // Limpiar usuario logueado
-    this.userRole = null; // Limpiar rol
+    this.loggedInUser = null;
+    this.userRole = null;
+    localStorage.removeItem('loggedInUser');
+    localStorage.removeItem('userRole');
   }
 
   resetPassword(usernameOrEmail: string): boolean {

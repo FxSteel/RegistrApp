@@ -60,12 +60,11 @@ export class HomePage implements OnInit {
     this.isScanning = true;
   }
 
-  // Función para detener el escaneo y detener el escáner QR
   stopScanning() {
+    this.isScanning = false;  // Detiene el escaneo estableciendo isScanning en false
     if (this.scanner) {
-      this.scanner.reset();  // Detiene el escáner
+      this.scanner.reset();  // Asegura que el escáner libere la cámara
     }
-    this.isScanning = false;
   }
 
   onCodeResult(result: string, asignatura: string) {
@@ -94,4 +93,11 @@ export class HomePage implements OnInit {
       buttons: ['OK']
     }).then(alert => alert.present());
   }
+
+  goToProfile() {
+    if (this.authService.isLoggedIn()) {
+      this.router.navigate(['/profile']);
+    }
+  }
+
 }

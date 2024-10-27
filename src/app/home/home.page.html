@@ -2,9 +2,17 @@
   <ion-toolbar>
     <ion-title>-- HOME --</ion-title>
     <ion-buttons slot="end">
+
+      <!-- Botón de cerrar sesión -->
       <ion-button class="botonmio" (click)="logout()">
         <ion-icon slot="icon-only" name="log-out-outline"></ion-icon>
       </ion-button>
+
+      <!-- Botón de perfil solo para alumnos -->
+      <ion-button *ngIf="role === 'alumno'" class="botonmio" (click)="goToProfile()">
+        <ion-icon slot="icon-only" name="person-circle-outline"></ion-icon>
+      </ion-button>
+      
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
