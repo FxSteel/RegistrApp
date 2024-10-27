@@ -9,7 +9,7 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding">
+<ion-content class="ion-padding" [style.padding-bottom.px]="isScanning ? 80 : 16">
   <div class="welcome">
     <h2>Bienvenido {{ username }}</h2>
   </div>
@@ -29,13 +29,21 @@
 
       <ion-card-content *ngIf="asignatura.expanded">
         <p>Toma de asistencia para: {{ asignatura.nombre }}</p>
-        <ion-button class="botonmio" expand="full" (click)="scanQRCode(asignatura.nombre)">Escanear QR</ion-button>
+        <!-- Botón para activar el escáner QR -->
+        <ion-button class="botonmio" expand="full" (click)="startScanning()">Escanear QR</ion-button>
+
+        <!-- Mostrar el escáner solo si isScanning es verdadero -->
+        <div *ngIf="isScanning">
+          <zxing-scanner (scanSuccess)="onCodeResult($event, asignatura.nombre)"></zxing-scanner>
+          <!-- Botón para cancelar el escaneo -->
+          <ion-button class="botonmio" color="danger" expand="full" (click)="stopScanning()">Cancelar</ion-button>
+        </div>
       </ion-card-content>
     </ion-card>
   </div>
 
-  <!-- Logo -->
-  <div class="logo-container">
+  <!-- Logo, oculto si el escáner está activo -->
+  <div class="logo-container" *ngIf="!isScanning">
     <img src="assets/LogoRegistrApp.png" alt="Logo" class="logo" />
   </div>
 
