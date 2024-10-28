@@ -60,7 +60,7 @@ export class HomePage implements OnInit {
   }
 
   goToResumenAsistencia() {
-    this.router.navigate(['/attendance-summary']);
+    this.router.navigate(['/resumen-asistencia']);
   }
 
   generateQRCode() {
