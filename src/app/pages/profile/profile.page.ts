@@ -11,6 +11,7 @@ export class ProfilePage implements OnInit {
   nombre: string = '';
   apellido: string = '';
   correo: string = '';
+  profilePictureUrl: string | null = null; // Propiedad para la URL de la imagen
   @ViewChild('fileInput') fileInput!: ElementRef;
 
   constructor(private authService: AuthService, private router: Router) {}
@@ -20,6 +21,10 @@ export class ProfilePage implements OnInit {
       this.router.navigate(['/login']);
     } else {
       this.nombre = this.authService.getUsername() || '';
+      const userData = this.authService.getUserData(this.nombre); // Obtiene los datos del usuario
+      this.apellido = userData?.apellido || ''; // Cargar apellido del usuario
+      this.correo = userData?.correo || ''; // Cargar correo del usuario
+      this.profilePictureUrl = localStorage.getItem('profilePictureUrl'); // Cargar URL de la imagen
     }
   }
 
@@ -32,16 +37,19 @@ export class ProfilePage implements OnInit {
     if (file) {
       const reader = new FileReader();
       reader.onload = (e: any) => {
-        document.querySelector('img')!.src = e.target.result;
+        this.profilePictureUrl = e.target.result; // Guardar la URL de la imagen en la variable
+        localStorage.setItem('profilePictureUrl', this.profilePictureUrl || ''); // Guardar en localStorage
       };
       reader.readAsDataURL(file);
     }
   }
 
   guardar() {
+    // Llamar a updateUserData para guardar apellido y correo
+    this.authService.updateUserData(this.authService.getUsername() || '', this.apellido, this.correo);
     this.router.navigate(['/home']);
   }
-
+  
   cancelar() {
     this.router.navigate(['/home']);
   }
