@@ -4,7 +4,7 @@ import { Injectable } from '@angular/core';
   providedIn: 'root',
 })
 export class AuthService {
-  private users: { [username: string]: { password: string; role: 'alumno' | 'profesor' } } = {
+  private users: { [username: string]: { password: string; role: 'alumno' | 'profesor'; apellido?: string; correo?: string } } = {
     'admin': { password: 'admin', role: 'profesor' },
     'root': { password: 'root', role: 'alumno' }
   };
@@ -12,17 +12,33 @@ export class AuthService {
   private userRole: 'alumno' | 'profesor' | null = null;
 
   constructor() {
-    // Cargar datos de localStorage al inicializar el servicio
     this.loggedInUser = localStorage.getItem('loggedInUser');
     this.userRole = localStorage.getItem('userRole') as 'alumno' | 'profesor' | null;
   }
 
-  register(username: string, password: string, role: 'alumno' | 'profesor'): boolean {
+  register(username: string, password: string, role: 'alumno' | 'profesor', apellido?: string, correo?: string): boolean {
     if (this.users[username]) {
       return false; // Usuario ya existe
     }
-    this.users[username] = { password, role };
-    return true;
+    this.users[username] = { password, role, apellido, correo }; // Almacenar apellido y correo
+    localStorage.setItem('users', JSON.stringify(this.users)); // Guarda en localStorage
+    return true; // Registro exitoso
+  }
+
+  getUserData(username: string) {
+    const storedUsers = localStorage.getItem('users');
+    if (storedUsers) {
+      this.users = JSON.parse(storedUsers);
+    }
+    return this.users[username];
+  }
+
+  updateUserData(username: string, apellido: string, correo: string) {
+    if (this.users[username]) {
+      this.users[username].apellido = apellido;
+      this.users[username].correo = correo;
+      localStorage.setItem('users', JSON.stringify(this.users)); // Guarda en localStorage
+    }
   }
 
   authenticate(username: string, password: string): boolean {
@@ -55,6 +71,7 @@ export class AuthService {
     this.userRole = null;
     localStorage.removeItem('loggedInUser');
     localStorage.removeItem('userRole');
+    localStorage.removeItem('users'); // Limpiar usuarios también
   }
 
   resetPassword(usernameOrEmail: string): boolean {
