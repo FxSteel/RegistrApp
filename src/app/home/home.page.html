@@ -20,10 +20,10 @@
 
     <!-- Tarjeta del clima -->
     <ion-card *ngIf="weatherData" class="weather-card">
-      <ion-card-header>
+      <ion-card-header class="weather-card-content">
         <ion-card-title>Clima en {{ weatherData.location.name }}</ion-card-title>
       </ion-card-header>
-      <ion-card-content>
+      <ion-card-content class="weather-card-content"> <!-- Clase añadida para centrar -->
         <p>Temperatura: {{ weatherData.current.temp_c }}°C</p>
         <p>Condición: {{ weatherData.current.condition.text }}</p>
         <img [src]="weatherData.current.condition.icon" alt="Icono del clima">
@@ -54,6 +54,12 @@
           </div>
         </ion-card-content>
       </ion-card>
+    </div>
+
+    <!-- Contenedor de QR -->
+    <div class="qr-container" *ngIf="showQRCode">
+      <img src="assets/qr-code.png" alt="Código QR" class="qr-image" />
+      <ion-button class="botonmio" (click)="projectQRCode()">Proyectar QR</ion-button>
     </div>
   </div>
 

@@ -16,8 +16,10 @@ export class ProfilePage implements OnInit {
   constructor(private authService: AuthService, private router: Router) {}
 
   ngOnInit() {
-    if (!this.authService.isLoggedIn() || this.authService.getRole() !== 'alumno'){
+    if (!this.authService.isLoggedIn()) {
       this.router.navigate(['/login']);
+    } else {
+      this.nombre = this.authService.getUsername() || '';
     }
   }
 
@@ -30,7 +32,6 @@ export class ProfilePage implements OnInit {
     if (file) {
       const reader = new FileReader();
       reader.onload = (e: any) => {
-        // Mostrar la imagen seleccionada
         document.querySelector('img')!.src = e.target.result;
       };
       reader.readAsDataURL(file);
