@@ -1,0 +1,45 @@
+.botonmio {
+    --background: #bfa575;
+    --background-activated: #bfa575;
+    --background-focused: #bfa575;
+    --background-hover: #bfa575;
+    --color: white; /* color del texto */
+
+    display: block; /* Permite que el botón se comporte como un bloque */
+    margin: 0 auto; /* Centra el botón horizontalmente */
+    position: relative; /* Esto es para poder usar `top` */
+    top: 10%; /* Centrar verticalmente */
+    padding: 5px; /*Distancia entre los botones*/
+}
+
+.content-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%; // Asegúrate de que ocupe todo el espacio disponible
+}
+  
+.centered-card {
+    text-align: center; // Centra el texto dentro de la tarjeta
+    width: 90%; // Ajusta el ancho según sea necesario
+    max-width: 400px; // Puedes establecer un ancho máximo para que no se expanda demasiado
+}
+
+.logo-footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 10px;
+    background-color: #202020;
+    color: white;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.logo {
+    max-width: 80px;
+    height: auto;
+}
