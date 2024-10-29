@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { AlertController } from '@ionic/angular';
 import { ZXingScannerComponent } from '@zxing/ngx-scanner';
 import { WeatherService } from '../services/weather.service';
+import { HttpClient } from '@angular/common/http'; // Importa HttpClient
 
 @Component({
   selector: 'app-home',
@@ -28,14 +29,15 @@ export class HomePage implements OnInit {
     private authService: AuthService,
     private router: Router,
     private alertController: AlertController,
-    private weatherService: WeatherService
+    private weatherService: WeatherService,
+    private http: HttpClient // Inyecta HttpClient
   ) {}
 
   ngOnInit() {
     if (this.authService.isLoggedIn()) {
       this.username = this.authService.getUsername() || '';
       this.role = this.authService.getRole();
-      this.loadWeather('Santiago'); // Llama a la función de clima con una ciudad
+      this.loadWeather('Santiago'); // Llamar a la función de clima con una ciudad
     } else {
       this.router.navigate(['/login']);
     }
@@ -81,27 +83,36 @@ export class HomePage implements OnInit {
   onCodeResult(result: string, asignatura: string) {
     console.log(`Código escaneado para ${asignatura}:`, result);
 
-    // Guardar la información en localStorage
+    // Datos a enviar a la API
     const attendanceData = {
-        username: this.username,
-        asignatura: asignatura,
-        fecha: new Date().toISOString(), // Formato ISO para la fecha
+      username: this.username,
+      asignatura: asignatura,
+      fecha: new Date().toISOString(),
     };
 
-    // Obtener los datos de asistencia existentes o inicializar un arreglo vacío
-    const attendanceRecords = JSON.parse(localStorage.getItem('attendanceRecords') || '[]');
-    attendanceRecords.push(attendanceData);
-    localStorage.setItem('attendanceRecords', JSON.stringify(attendanceRecords));
-
-    this.alertController.create({
-        header: 'Escaneo Completo',
-        message: `Código escaneado para ${asignatura}: ${result}`,
-        buttons: ['OK']
-    }).then(alert => alert.present());
+    // Envía los datos a la API
+    this.http.post('http://localhost:3000/api/save-data', attendanceData)
+      .subscribe(
+        response => {
+          console.log('Datos guardados en Excel:', response);
+          this.alertController.create({
+            header: 'Escaneo Completo',
+            message: `Código escaneado para ${asignatura}: ${result}`,
+            buttons: ['OK']
+          }).then(alert => alert.present());
+        },
+        error => {
+          console.error('Error al guardar los datos:', error);
+          this.alertController.create({
+            header: 'Error',
+            message: 'No se pudo guardar la asistencia.',
+            buttons: ['OK']
+          }).then(alert => alert.present());
+        }
+      );
 
     this.isScanning = false;
-}
-
+  }
 
   toggleExpand(asignatura: any) {
     this.asignaturas.forEach(a => {
