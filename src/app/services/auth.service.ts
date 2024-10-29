@@ -4,7 +4,15 @@ import { Injectable } from '@angular/core';
   providedIn: 'root',
 })
 export class AuthService {
-  private users: { [username: string]: { password: string; role: 'alumno' | 'profesor'; apellido?: string; correo?: string } } = {
+  private users: { 
+    [username: string]: { 
+      password: string; 
+      role: 'alumno' | 'profesor'; 
+      apellido?: string; 
+      correo?: string; 
+      profilePictureUrl?: string; // Nueva propiedad para almacenar la URL de la imagen
+    } 
+  } = {
     'admin': { password: 'admin', role: 'profesor' },
     'root': { password: 'root', role: 'alumno' }
   };
@@ -16,11 +24,11 @@ export class AuthService {
     this.userRole = localStorage.getItem('userRole') as 'alumno' | 'profesor' | null;
   }
 
-  register(username: string, password: string, role: 'alumno' | 'profesor', apellido?: string, correo?: string): boolean {
+  register(username: string, password: string, role: 'alumno' | 'profesor', apellido?: string, correo?: string, profilePictureUrl?: string): boolean {
     if (this.users[username]) {
       return false; // Usuario ya existe
     }
-    this.users[username] = { password, role, apellido, correo }; // Almacenar apellido y correo
+    this.users[username] = { password, role, apellido, correo, profilePictureUrl }; // Almacenar apellido, correo y URL de imagen
     localStorage.setItem('users', JSON.stringify(this.users)); // Guarda en localStorage
     return true; // Registro exitoso
   }
@@ -37,6 +45,13 @@ export class AuthService {
     if (this.users[username]) {
       this.users[username].apellido = apellido;
       this.users[username].correo = correo;
+      localStorage.setItem('users', JSON.stringify(this.users)); // Guarda en localStorage
+    }
+  }
+
+  updateProfilePicture(username: string, profilePictureUrl: string) {
+    if (this.users[username]) {
+      this.users[username].profilePictureUrl = profilePictureUrl;
       localStorage.setItem('users', JSON.stringify(this.users)); // Guarda en localStorage
     }
   }

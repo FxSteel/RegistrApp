@@ -80,13 +80,28 @@ export class HomePage implements OnInit {
 
   onCodeResult(result: string, asignatura: string) {
     console.log(`Código escaneado para ${asignatura}:`, result);
+
+    // Guardar la información en localStorage
+    const attendanceData = {
+        username: this.username,
+        asignatura: asignatura,
+        fecha: new Date().toISOString(), // Formato ISO para la fecha
+    };
+
+    // Obtener los datos de asistencia existentes o inicializar un arreglo vacío
+    const attendanceRecords = JSON.parse(localStorage.getItem('attendanceRecords') || '[]');
+    attendanceRecords.push(attendanceData);
+    localStorage.setItem('attendanceRecords', JSON.stringify(attendanceRecords));
+
     this.alertController.create({
-      header: 'Escaneo Completo',
-      message: `Código escaneado para ${asignatura}: ${result}`,
-      buttons: ['OK']
+        header: 'Escaneo Completo',
+        message: `Código escaneado para ${asignatura}: ${result}`,
+        buttons: ['OK']
     }).then(alert => alert.present());
+
     this.isScanning = false;
-  }
+}
+
 
   toggleExpand(asignatura: any) {
     this.asignaturas.forEach(a => {
