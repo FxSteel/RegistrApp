@@ -7,13 +7,38 @@
 <ion-content class="ion-padding">
   <form (ngSubmit)="login()">
     <ion-item>
-      <ion-label class="labelColor" position="floating">Nombre de Usuario</ion-label>
-      <ion-input [(ngModel)]="username" name="username" required></ion-input>
+      <ion-label
+        class="labelColor"
+        position="floating"
+        [class.shrink]="isUsernameFocused || username">
+        Nombre de Usuario
+      </ion-label>
+      <ion-input
+        [(ngModel)]="username"
+        name="username"
+        required
+        (ionFocus)="onUsernameFocus()"
+        (ionBlur)="onUsernameBlur()">
+      </ion-input>
     </ion-item>
+    
     <ion-item>
-      <ion-label class="labelColor" position="floating">Contraseña</ion-label>
-      <ion-input type="password" [(ngModel)]="password" name="password" required></ion-input>
+      <ion-label
+        class="labelColor"
+        position="floating"
+        [class.shrink]="isPasswordFocused || password">
+        Contraseña
+      </ion-label>
+      <ion-input
+        type="password"
+        [(ngModel)]="password"
+        name="password"
+        required
+        (ionFocus)="onPasswordFocus()"
+        (ionBlur)="onPasswordBlur()">
+      </ion-input>
     </ion-item>
+    
     <ion-button class="botonmio" expand="full" type="submit">Iniciar Sesión</ion-button>
   </form>
   

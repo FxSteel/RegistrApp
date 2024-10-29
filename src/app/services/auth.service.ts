@@ -4,29 +4,69 @@ import { Injectable } from '@angular/core';
   providedIn: 'root',
 })
 export class AuthService {
-  private users: { [username: string]: { password: string; role: 'alumno' | 'profesor' } } = {
-    // Usuarios predeterminados
+  private users: { 
+    [username: string]: { 
+      password: string; 
+      role: 'alumno' | 'profesor'; 
+      apellido?: string; 
+      correo?: string; 
+      profilePictureUrl?: string; 
+    } 
+  } = {
     'admin': { password: 'admin', role: 'profesor' },
     'root': { password: 'root', role: 'alumno' }
   };
   private loggedInUser: string | null = null;
   private userRole: 'alumno' | 'profesor' | null = null;
 
-  register(username: string, password: string, role: 'alumno' | 'profesor'): boolean {
+  constructor() {
+    this.loggedInUser = localStorage.getItem('loggedInUser');
+    this.userRole = localStorage.getItem('userRole') as 'alumno' | 'profesor' | null;
+  }
+
+  register(username: string, password: string, role: 'alumno' | 'profesor', apellido?: string, correo?: string, profilePictureUrl?: string): boolean {
     if (this.users[username]) {
       return false; // Usuario ya existe
     }
-    this.users[username] = { password, role }; // Guardar usuario y rol
+    this.users[username] = { password, role, apellido, correo, profilePictureUrl };
+    localStorage.setItem('users', JSON.stringify(this.users)); // Guarda en localStorage
     return true; // Registro exitoso
+  }
+
+  getUserData(username: string) {
+    const storedUsers = localStorage.getItem('users');
+    if (storedUsers) {
+      this.users = JSON.parse(storedUsers);
+    }
+    return this.users[username];
+  }
+
+  updateUserData(username: string, apellido: string, correo: string) {
+    if (this.users[username]) {
+      this.users[username].apellido = apellido;
+      this.users[username].correo = correo;
+      localStorage.setItem('users', JSON.stringify(this.users)); // Guarda en localStorage
+    }
+  }
+
+  updateProfilePicture(username: string, profilePictureUrl: string) {
+    if (this.users[username]) {
+      this.users[username].profilePictureUrl = profilePictureUrl;
+      localStorage.setItem('users', JSON.stringify(this.users)); // Guarda en localStorage
+    }
   }
 
   authenticate(username: string, password: string): boolean {
     if (this.users[username]?.password === password) {
-      this.loggedInUser = username; // Establecer usuario logueado
-      this.userRole = this.users[username].role; // Establecer rol del usuario
-      return true; // Autenticación exitosa
+      this.loggedInUser = username;
+      this.userRole = this.users[username].role;
+
+      // Guardar en localStorage
+      localStorage.setItem('loggedInUser', username);
+      localStorage.setItem('userRole', this.userRole);
+      return true;
     }
-    return false; // Autenticación fallida
+    return false;
   }
 
   isLoggedIn(): boolean {
@@ -42,8 +82,11 @@ export class AuthService {
   }
 
   clear(): void {
-    this.loggedInUser = null; // Limpiar usuario logueado
-    this.userRole = null; // Limpiar rol
+    this.loggedInUser = null;
+    this.userRole = null;
+    localStorage.removeItem('loggedInUser');
+    localStorage.removeItem('userRole');
+    localStorage.removeItem('users'); // Limpiar usuarios también
   }
 
   resetPassword(usernameOrEmail: string): boolean {

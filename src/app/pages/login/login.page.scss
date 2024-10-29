@@ -15,8 +15,14 @@
 
 //clase para los labels
 .labelColor{
-    color: #bfa575;
+    color: #bfa575 !important;
+
+    &.shrink {
+        font-size: 0.9em;
+        color: #bfa575 !important;
+    }
 }
+  
 
 //Logo
 .logo-container {

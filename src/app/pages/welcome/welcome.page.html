@@ -9,6 +9,9 @@
     <img src="assets/LogoRegistrApp.png" alt="Logo" />
   </div>
 
+  <!-- Barra de progreso, visible solo cuando showProgressBar es true -->
+  <ion-progress-bar *ngIf="showProgressBar" type="indeterminate" color="warning"></ion-progress-bar>
+
   <!-- Botón con clase específica -->
   <ion-button class="centered-button" (click)="goToLogin()">Iniciar</ion-button>
 

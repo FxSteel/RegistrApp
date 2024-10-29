@@ -1,7 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { AuthService } from '../services/auth.service';
 import { Router } from '@angular/router';
 import { AlertController } from '@ionic/angular';
+import { ZXingScannerComponent } from '@zxing/ngx-scanner';
+import { WeatherService } from '../services/weather.service';
+import { HttpClient } from '@angular/common/http'; // Importa HttpClient
 
 @Component({
   selector: 'app-home',
@@ -9,9 +12,13 @@ import { AlertController } from '@ionic/angular';
   styleUrls: ['./home.page.scss'],
 })
 export class HomePage implements OnInit {
+  @ViewChild(ZXingScannerComponent) scanner: ZXingScannerComponent | undefined;
   username: string = '';
   role: 'alumno' | 'profesor' | null = null;
   showQRCode: boolean = false;
+  isScanning: boolean = false;
+  weatherData: any;
+
   asignaturas: { nombre: string, expanded: boolean }[] = [
     { nombre: 'Arquitectura de Software', expanded: false },
     { nombre: 'Prog. App Moviles', expanded: false },
@@ -21,16 +28,26 @@ export class HomePage implements OnInit {
   constructor(
     private authService: AuthService,
     private router: Router,
-    private alertController: AlertController
+    private alertController: AlertController,
+    private weatherService: WeatherService,
+    private http: HttpClient // Inyecta HttpClient
   ) {}
 
   ngOnInit() {
     if (this.authService.isLoggedIn()) {
       this.username = this.authService.getUsername() || '';
       this.role = this.authService.getRole();
+      this.loadWeather('Santiago'); // Llamar a la función de clima con una ciudad
     } else {
       this.router.navigate(['/login']);
     }
+  }
+
+  loadWeather(city: string) {
+    this.weatherService.getWeather(city).subscribe(
+      data => this.weatherData = data,
+      error => console.error('Error al obtener el clima:', error)
+    );
   }
 
   async logout() {
@@ -45,27 +62,64 @@ export class HomePage implements OnInit {
   }
 
   goToResumenAsistencia() {
-    this.router.navigate(['/attendance-summary']);
+    this.router.navigate(['/resumen-asistencia']);
   }
 
   generateQRCode() {
     this.showQRCode = true;
   }
 
-  scanQRCode(asignatura: string) {
-    console.log(`Escaneando QR para ${asignatura}`);
-    // Lógica para validar el QR en algún momento si es necesario
+  startScanning() {
+    this.isScanning = true;
+  }
+
+  stopScanning() {
+    this.isScanning = false;
+    if (this.scanner) {
+      this.scanner.reset();
+    }
+  }
+
+  onCodeResult(result: string, asignatura: string) {
+    console.log(`Código escaneado para ${asignatura}:`, result);
+
+    // Datos a enviar a la API
+    const attendanceData = {
+      username: this.username,
+      asignatura: asignatura,
+      fecha: new Date().toISOString(),
+    };
+
+    // Envía los datos a la API
+    this.http.post('http://localhost:3000/api/save-data', attendanceData)
+      .subscribe(
+        response => {
+          console.log('Datos guardados en Excel:', response);
+          this.alertController.create({
+            header: 'Escaneo Completo',
+            message: `Código escaneado para ${asignatura}: ${result}`,
+            buttons: ['OK']
+          }).then(alert => alert.present());
+        },
+        error => {
+          console.error('Error al guardar los datos:', error);
+          this.alertController.create({
+            header: 'Error',
+            message: 'No se pudo guardar la asistencia.',
+            buttons: ['OK']
+          }).then(alert => alert.present());
+        }
+      );
+
+    this.isScanning = false;
   }
 
   toggleExpand(asignatura: any) {
-    // Cerrar cualquier tarjeta previamente expandida
     this.asignaturas.forEach(a => {
       if (a !== asignatura) {
         a.expanded = false;
       }
     });
-
-    // Alternar la expansión de la tarjeta seleccionada
     asignatura.expanded = !asignatura.expanded;
   }
 
@@ -75,5 +129,11 @@ export class HomePage implements OnInit {
       message: 'Código QR proyectado en pantalla.',
       buttons: ['OK']
     }).then(alert => alert.present());
+  }
+
+  goToProfile() {
+    if (this.authService.isLoggedIn()) {
+      this.router.navigate(['/profile']);
+    }
   }
 }
