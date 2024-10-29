@@ -88,35 +88,37 @@ export class HomePage implements OnInit {
 
   onCodeResult(result: string, asignatura: string) {
     console.log(`Código escaneado para ${asignatura}:`, result);
-
+  
     // Datos a enviar a la API
     const attendanceData = {
-      username: this.username,
-      asignatura: asignatura,
-      fecha: new Date().toISOString(),
+      nombre: this.username,  // Obtener el nombre del usuario autenticado
+      apellido: 'ApellidoDeEjemplo',  // Aquí deberías obtener el apellido real
+      correo: 'correo@ejemplo.com',  // Aquí deberías obtener el correo real
+      rol: this.role,  // Rol del usuario
+      asignatura: asignatura,  // Asignatura que se escaneó
+      fecha: new Date().toISOString(),  // Fecha actual
     };
 
     // Envía los datos a la API
     this.http.post('http://localhost:3000/api/save-data', attendanceData)
-      .subscribe(
-        response => {
-          console.log('Datos guardados en Excel:', response);
-          this.alertController.create({
-            header: 'Escaneo Completo',
-            message: `Código escaneado para ${asignatura}: ${result}`,
-            buttons: ['OK']
-          }).then(alert => alert.present());
-        },
-        error => {
-          console.error('Error al guardar los datos:', error);
-          this.alertController.create({
-            header: 'Error',
-            message: 'No se pudo guardar la asistencia.',
-            buttons: ['OK']
-          }).then(alert => alert.present());
-        }
-      );
-
+    .subscribe(
+      response => {
+        console.log('Datos guardados en Excel:', response);
+        this.alertController.create({
+          header: 'Escaneo Completo',
+          message: `Código escaneado para ${asignatura}: ${result}`,
+          buttons: ['OK']
+        }).then(alert => alert.present());
+      },
+      error => {
+        console.error('Error al guardar los datos:', error);
+        this.alertController.create({
+          header: 'Error',
+          message: 'No se pudo guardar la asistencia.',
+          buttons: ['OK']
+        }).then(alert => alert.present());
+      }
+    );
     this.isScanning = false;
   }
 
