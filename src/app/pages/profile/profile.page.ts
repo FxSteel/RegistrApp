@@ -24,7 +24,7 @@ export class ProfilePage implements OnInit {
       const userData = this.authService.getUserData(this.nombre); // Obtiene los datos del usuario
       this.apellido = userData?.apellido || ''; // Cargar apellido del usuario
       this.correo = userData?.correo || ''; // Cargar correo del usuario
-      this.profilePictureUrl = localStorage.getItem('profilePictureUrl'); // Cargar URL de la imagen
+      this.profilePictureUrl = userData?.profilePictureUrl || null; // Cargar URL de la imagen
     }
   }
 
@@ -38,7 +38,7 @@ export class ProfilePage implements OnInit {
       const reader = new FileReader();
       reader.onload = (e: any) => {
         this.profilePictureUrl = e.target.result; // Guardar la URL de la imagen en la variable
-        localStorage.setItem('profilePictureUrl', this.profilePictureUrl || ''); // Guardar en localStorage
+        this.authService.updateProfilePicture(this.authService.getUsername() || '', this.profilePictureUrl!); // Usar el operador de aserción no nulo
       };
       reader.readAsDataURL(file);
     }
