@@ -10,7 +10,7 @@ export class AuthService {
       role: 'alumno' | 'profesor'; 
       apellido?: string; 
       correo?: string; 
-      profilePictureUrl?: string; // Nueva propiedad para almacenar la URL de la imagen
+      profilePictureUrl?: string; 
     } 
   } = {
     'admin': { password: 'admin', role: 'profesor' },
@@ -28,7 +28,7 @@ export class AuthService {
     if (this.users[username]) {
       return false; // Usuario ya existe
     }
-    this.users[username] = { password, role, apellido, correo, profilePictureUrl }; // Almacenar apellido, correo y URL de imagen
+    this.users[username] = { password, role, apellido, correo, profilePictureUrl };
     localStorage.setItem('users', JSON.stringify(this.users)); // Guarda en localStorage
     return true; // Registro exitoso
   }
