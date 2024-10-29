@@ -1,0 +1,24 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Asistencia</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding content-container">
+  <ion-card class="centered-card">
+    <ion-card-header>
+      <ion-card-title>Registro Exitoso</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <p>Tu asistencia ha sido registrada correctamente.</p>
+      <ion-button class="botonmio" expand="full" (click)="goBack()">Volver al Inicio</ion-button>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Logo en el pie de página, no desplazable -->
+  <div class="logo-footer">
+    <img src="assets/LogoRegistrApp.png" alt="Logo" class="logo" />
+  </div>
+
+</ion-content>
+

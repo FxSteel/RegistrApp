@@ -71,8 +71,14 @@ export class HomePage implements OnInit {
 
   startScanning() {
     this.isScanning = true;
+  
+    
+    setTimeout(() => {
+      this.stopScanning();
+      this.router.navigate(['/salida']);
+    }, 8000); // cerrar camara y redirigir a vista salida despues de 8 segundos
   }
-
+  
   stopScanning() {
     this.isScanning = false;
     if (this.scanner) {
