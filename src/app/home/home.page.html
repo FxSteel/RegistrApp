@@ -26,7 +26,7 @@
       <ion-card-header class="weather-card-content">
         <ion-card-title>Clima en {{ weatherData.location.name }}</ion-card-title>
       </ion-card-header>
-      <ion-card-content class="weather-card-content"> <!-- Clase añadida para centrar -->
+      <ion-card-content class="weather-card-content">
         <p>Temperatura: {{ weatherData.current.temp_c }}°C</p>
         <p>Condición: {{ weatherData.current.condition.text }}</p>
         <img [src]="weatherData.current.condition.icon" alt="Icono del clima">
@@ -38,7 +38,23 @@
 
     <!-- Botón de Generar QR solo para profesores -->
     <div *ngIf="role === 'profesor'">
-      <ion-button class="botonmio" expand="full" (click)="generateQRCode()">Generar Código QR</ion-button>
+      <h3>Generar código QR por asignatura</h3>
+      <ion-card *ngFor="let asignatura of asignaturas">
+        <ion-card-header (click)="toggleExpand(asignatura)">
+          <ion-card-title>{{ asignatura.nombre }}</ion-card-title>
+        </ion-card-header>
+        <ion-card-content *ngIf="asignatura.expanded">
+          <ion-button class="botonmio" expand="full" (click)="generateQRCodeForAsignatura(asignatura)">
+            Generar Código QR
+          </ion-button>
+
+          <!-- Mostrar el código QR si se ha generado -->
+          <div *ngIf="asignatura.showQRCode" class="qr-container">
+            <img src="assets/qr-code.png" alt="Código QR para {{ asignatura.nombre }}" class="qr-image" />
+            <ion-button class="botonmio" (click)="projectQRCode()">Proyectar QR</ion-button>
+          </div>
+        </ion-card-content>
+      </ion-card>
     </div>
 
     <!-- Tarjetas de asignaturas solo para alumnos -->
@@ -57,12 +73,6 @@
           </div>
         </ion-card-content>
       </ion-card>
-    </div>
-
-    <!-- Contenedor de QR -->
-    <div class="qr-container" *ngIf="showQRCode">
-      <img src="assets/qr-code.png" alt="Código QR" class="qr-image" />
-      <ion-button class="botonmio" (click)="projectQRCode()">Proyectar QR</ion-button>
     </div>
   </div>
 
