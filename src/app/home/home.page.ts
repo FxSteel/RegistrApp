@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, HostListener } from '@angular/core';
 import { AuthService } from '../services/auth.service';
 import { Router } from '@angular/router';
 import { AlertController } from '@ionic/angular';
@@ -19,7 +19,7 @@ export class HomePage implements OnInit {
   isScanning: boolean = false;
   weatherData: any;
 
-  asignaturas: { nombre: string, expanded: boolean }[] = [
+  asignaturas: { nombre: string, expanded: boolean, showQRCode?: boolean }[] = [
     { nombre: 'Arquitectura de Software', expanded: false },
     { nombre: 'Prog. App Moviles', expanded: false },
     { nombre: 'Diseño de Software', expanded: false }
@@ -69,16 +69,18 @@ export class HomePage implements OnInit {
     this.showQRCode = true;
   }
 
+  generateQRCodeForAsignatura(asignatura: any) {
+    asignatura.showQRCode = true; // Activar la visualización del QR dentro de la tarjeta
+  }
+
   startScanning() {
     this.isScanning = true;
-  
-    
     setTimeout(() => {
       this.stopScanning();
       this.router.navigate(['/salida']);
     }, 8000); // cerrar camara y redirigir a vista salida despues de 8 segundos
   }
-  
+
   stopScanning() {
     this.isScanning = false;
     if (this.scanner) {
@@ -91,12 +93,12 @@ export class HomePage implements OnInit {
   
     // Datos a enviar a la API
     const attendanceData = {
-      nombre: this.username,  // Obtener el nombre del usuario autenticado
-      apellido: 'ApellidoDeEjemplo',  // Aquí deberías obtener el apellido real
-      correo: 'correo@ejemplo.com',  // Aquí deberías obtener el correo real
-      rol: this.role,  // Rol del usuario
-      asignatura: asignatura,  // Asignatura que se escaneó
-      fecha: new Date().toISOString(),  // Fecha actual
+      nombre: this.username,
+      apellido: 'ApellidoDeEjemplo',
+      correo: 'correo@ejemplo.com',
+      rol: this.role,
+      asignatura: asignatura,
+      fecha: new Date().toISOString(),
     };
 
     // Envía los datos a la API
@@ -126,9 +128,21 @@ export class HomePage implements OnInit {
     this.asignaturas.forEach(a => {
       if (a !== asignatura) {
         a.expanded = false;
+        a.showQRCode = false; // Asegura que el QR se cierre al colapsar la tarjeta
       }
     });
     asignatura.expanded = !asignatura.expanded;
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: Event) {
+    const clickedElement = event.target as HTMLElement;
+    if (!clickedElement.closest('ion-card')) {
+      this.asignaturas.forEach(asignatura => {
+        asignatura.expanded = false;
+        asignatura.showQRCode = false; // Cierra todas las tarjetas y el QR al hacer clic fuera de las tarjetas
+      });
+    }
   }
 
   projectQRCode() {
