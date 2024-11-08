@@ -9,7 +9,16 @@
   </ion-toolbar>
 </ion-header>
 
-
 <ion-content class="ion-padding">
   <p>RESUMEN DE ALUMNOS QUE ASISTIERON</p>
+  
+  <ion-list>
+    <ion-item *ngFor="let registro of registrosAsistencia">
+      <ion-label>
+        <h2>{{ registro.nombre }}</h2>
+        <p>Asignatura: {{ registro.asignatura }}</p>
+        <p>Fecha: {{ registro.fecha }}</p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
 </ion-content>

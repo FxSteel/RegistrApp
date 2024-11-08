@@ -94,8 +94,8 @@ export class HomePage implements OnInit {
     // Datos a enviar a la API
     const attendanceData = {
       nombre: this.username,
-      apellido: 'ApellidoDeEjemplo',
-      correo: 'correo@ejemplo.com',
+      apellido: 'ApellidoDeEjemplo',//ejemplo para test
+      correo: 'correo@ejemplo.com',//ejemplo para test
       rol: this.role,
       asignatura: asignatura,
       fecha: new Date().toISOString(),
