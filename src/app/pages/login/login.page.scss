@@ -1,43 +1,57 @@
-//clase para los botones
+// Estilos para la cabecera del logo en la tarjeta
+.logo-container-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
+}
+  
+.logo-header {
+    max-width: 100px; /* Ajusta el tamaño del logo */
+    height: auto;
+}
+  
+// Estilos para los botones
 .botonmio {
     --background: #bfa575;
     --background-activated: #bfa575;
     --background-focused: #bfa575;
     --background-hover: #bfa575;
     --color: white; /* color del texto */
-
+  
     display: block; /* Permite que el botón se comporte como un bloque */
-    margin: 0 auto; /* Centra el botón horizontalmente */
+    margin: 10px auto 0 auto; /* Centra el botón horizontalmente */
     position: relative; /* Esto es para poder usar `top` */
     top: 10%; /* Centrar verticalmente */
-    padding: 5px; /*Distancia entre los botones*/
-}
-
-//clase para los labels
-.labelColor{
-    color: #bfa575 !important;
-
-    &.shrink {
-        font-size: 0.9em;
-        color: #bfa575 !important;
-    }
+    padding: 5px; /* Distancia entre los botones */
 }
   
+// Estilos para los labels
+.labelColor {
+    color: #bfa575 !important;
+  
+    &.shrink {
+      font-size: 0.9em;
+      color: #bfa575 !important;
+    }
+}
 
-//Logo
-.logo-container {
+//spinner de carga
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.9); /* Difuminado */
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: 20px;
-    position: absolute;
-    bottom: 20px;
-    left: 0;
-    right: 0;
+    z-index: 1000; /* Asegura que esté por encima de otros elementos */
 }
   
-.logo {
-    max-width: 50px;
-    height: auto;
-  }
+.overlay ion-spinner {
+    color: #bfa575; /* Color de los dots en formato hexadecimal */
+    transform: scale(2); /* Aumenta el tamaño del spinner */
+}
   

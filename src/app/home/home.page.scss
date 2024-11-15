@@ -45,13 +45,36 @@
 }
 
 .qr-image {
-  width: 150px; /* Tamaño reducido */
+  width: 150px;
   margin-bottom: 10px;
 }
 
 .weather-card-content {
   display: flex;
   flex-direction: column;
-  align-items: center;  /* Centra horizontalmente */
-  text-align: center;   /* Centra el texto */
+  align-items: center;
+  text-align: center;
+}
+
+ion-slides {
+  width: 100%;
+  height: auto;
+  margin-top: 20px;
+}
+
+ion-slide {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+ion-card {
+  width: 90%;
+  max-width: 400px;
+  margin: auto;
+}
+
+/* Agrega espacio entre las tarjetas de asignaturas */
+ion-card.asignatura-card {
+  margin-bottom: 10px;
 }
