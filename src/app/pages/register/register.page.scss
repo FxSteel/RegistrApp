@@ -1,34 +1,45 @@
-// clase para el color de los botones
-.botonmio {
+// Estilos para el logo dentro del header
+.logo-container-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  .logo-header {
+    max-width: 100px; /* Ajusta el tamaño del logo */
+    height: auto;
+  }
+  
+  // Estilos para los botones
+  .botonmio {
     --background: #bfa575;
     --background-activated: #bfa575;
     --background-focused: #bfa575;
     --background-hover: #bfa575;
     --color: white; /* color del texto */
-}
-//clase para los labels
-.labelColor{
+  }
+  
+  // Estilos para los labels
+  .labelColor {
     color: #bfa575;
-}
-
-//clase del color de la flecha
-ion-back-button {
+  }
+  
+  // Estilos para el color de la flecha
+  ion-back-button {
     --color: #bfa575;
-}
-
-//Logo
-.logo-container {
+  }
+  
+  // Logo en el header
+  .logo-container-header {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: 20px;
-    position: absolute;
-    bottom: 20px;
-    left: 0;
-    right: 0;
-}
+    margin-top: 20px;  /* Margen superior ajustado */
+  }
   
-.logo {
+  .logo-header {
     max-width: 100px;
     height: auto;
-}
+  }
+  
