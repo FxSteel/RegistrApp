@@ -9,8 +9,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "lint": "ng lint",
-    "start": "concurrently \"node ./app.js\" \"ionic serve\""
+    "lint": "ng lint"
   },
   "private": true,
   "dependencies": {

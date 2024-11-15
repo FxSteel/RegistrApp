@@ -1,3 +1,22 @@
+/* Mantener la separación entre las cards de asignaturas */
+ion-card {
+  margin-top: 20px;
+  width: 90%;
+  max-width: 400px;
+  margin: 10px auto; /* Añadir margen lateral para separar cada card */
+}
+
+/* Separar las cards de asignaturas de manera uniforme */
+ion-card + ion-card {
+  margin-top: 20px; /* Añadir espacio entre las cards */
+}
+
+/* Si necesitas un mayor margen entre las cards del clima */
+.weather-card {
+  margin-top: 20px;
+}
+
+/* Resto del código */
 .scrollable-content {
   height: calc(100vh - 140px);
   overflow-y: auto;
@@ -60,20 +79,9 @@ ion-slides {
   height: auto;
   margin-top: 20px;
 }
-
+//sliders quedan pendientes para la proxima iteración
 ion-slide {
   display: flex;
   justify-content: center;
   align-items: center;
-}
-
-ion-card {
-  width: 90%;
-  max-width: 400px;
-  margin: auto;
-}
-
-/* Agrega espacio entre las tarjetas de asignaturas */
-ion-card.asignatura-card {
-  margin-bottom: 15px;
 }

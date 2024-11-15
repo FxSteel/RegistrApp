@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { AlertController } from '@ionic/angular'; // Importa AlertController
 
 @Component({
   selector: 'app-login',
@@ -14,7 +15,11 @@ export class LoginPage {
   isPasswordFocused: boolean = false;
   isLoading: boolean = false;
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+    private alertController: AlertController // Inyecta AlertController
+  ) {}
 
   ionViewWillEnter() {
     this.username = '';
@@ -41,10 +46,24 @@ export class LoginPage {
     }
   }
 
+  async showAlert() {
+    const alert = await this.alertController.create({
+      header: 'Acceso denegado',
+      message: 'Faltan credenciales. Por favor, ingrese su nombre de usuario y contraseña.',
+      buttons: ['OK']
+    });
+    await alert.present();
+  }
+
   login() {
+    if (!this.username || !this.password) {
+      this.showAlert(); // Muestra el popup de advertencia si falta alguna credencial
+      return;
+    }
+    
     this.isLoading = true; // Mostrar el spinner
     setTimeout(() => {
-      this.isLoading = false; // Ocultar el spinner después de 1 segundos
+      this.isLoading = false; // Ocultar el spinner después de 1 segundo
       if (this.authService.authenticate(this.username, this.password)) {
         this.router.navigate(['/home']);
       } else {
