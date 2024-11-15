@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { AlertController } from '@ionic/angular';  // Importamos el AlertController
 
 @Component({
   selector: 'app-profile',
@@ -14,7 +15,11 @@ export class ProfilePage implements OnInit {
   profilePictureUrl: string | null = null; // Propiedad para la URL de la imagen
   @ViewChild('fileInput') fileInput!: ElementRef;
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(
+    private authService: AuthService, 
+    private router: Router, 
+    private alertController: AlertController // Inyectamos el AlertController
+  ) {}
 
   ngOnInit() {
     if (!this.authService.isLoggedIn()) {
@@ -47,9 +52,30 @@ export class ProfilePage implements OnInit {
   guardar() {
     // Llamar a updateUserData para guardar apellido y correo
     this.authService.updateUserData(this.authService.getUsername() || '', this.apellido, this.correo);
-    this.router.navigate(['/home']);
+
+    // Mostrar el popup de éxito
+    this.showSuccessAlert();
   }
-  
+
+  // Método para mostrar el Alert de éxito
+  async showSuccessAlert() {
+    const alert = await this.alertController.create({
+      header: 'Modificación exitosa',
+      message: 'Tus datos personales han sido modificados correctamente.',
+      buttons: [
+        {
+          text: 'OK',
+          handler: () => {
+            // Redirigir al Home después de hacer clic en "OK"
+            this.router.navigate(['/home']);
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
   cancelar() {
     this.router.navigate(['/home']);
   }
