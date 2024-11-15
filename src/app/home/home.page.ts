@@ -19,6 +19,15 @@ export class HomePage implements OnInit {
   isScanning: boolean = false;
   weatherData: any;
 
+  slideOpts = {
+    initialSlide: 0,
+    centeredSlides: true,
+    speed: 400,
+    loop: true,
+    slidesPerView: 1.5,
+    spaceBetween:10
+  };
+
   asignaturas: { nombre: string, expanded: boolean, showQRCode?: boolean }[] = [
     { nombre: 'Arquitectura de Software', expanded: false },
     { nombre: 'Prog. App Moviles', expanded: false },
@@ -75,10 +84,6 @@ export class HomePage implements OnInit {
 
   startScanning() {
     this.isScanning = true;
-    setTimeout(() => {
-      this.stopScanning();
-      this.router.navigate(['/salida']);
-    }, 8000); // cerrar camara y redirigir a vista salida despues de 8 segundos
   }
 
   stopScanning() {
@@ -91,38 +96,14 @@ export class HomePage implements OnInit {
   onCodeResult(result: string, asignatura: string) {
     console.log(`Código escaneado para ${asignatura}:`, result);
   
-    // Datos a enviar a la API
-    const attendanceData = {
-      nombre: this.username,
-      apellido: 'ApellidoDeEjemplo',//ejemplo para test
-      correo: 'correo@ejemplo.com',//ejemplo para test
-      rol: this.role,
-      asignatura: asignatura,
-      fecha: new Date().toISOString(),
-    };
-
-    // Envía los datos a la API
-    this.http.post('http://localhost:3000/api/save-data', attendanceData)
-    .subscribe(
-      response => {
-        console.log('Datos guardados en Excel:', response);
-        this.alertController.create({
-          header: 'Escaneo Completo',
-          message: `Código escaneado para ${asignatura}: ${result}`,
-          buttons: ['OK']
-        }).then(alert => alert.present());
-      },
-      error => {
-        console.error('Error al guardar los datos:', error);
-        this.alertController.create({
-          header: 'Error',
-          message: 'No se pudo guardar la asistencia.',
-          buttons: ['OK']
-        }).then(alert => alert.present());
-      }
-    );
+    this.alertController.create({
+      header: 'Escaneo Completo',
+      message: `Código escaneado para ${asignatura}: ${result}`,
+      buttons: ['OK']
+    }).then(alert => alert.present());
+  
     this.isScanning = false;
-  }
+  }  
 
   toggleExpand(asignatura: any) {
     this.asignaturas.forEach(a => {

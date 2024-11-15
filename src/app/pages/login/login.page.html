@@ -1,55 +1,36 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title class="labelColor">Inicio de Sesión</ion-title>
-  </ion-toolbar>
-</ion-header>
-
 <ion-content class="ion-padding">
-  <form (ngSubmit)="login()">
-    <ion-item>
-      <ion-label
-        class="labelColor"
-        position="floating"
-        [class.shrink]="isUsernameFocused || username">
-        Nombre de Usuario
-      </ion-label>
-      <ion-input
-        [(ngModel)]="username"
-        name="username"
-        required
-        (ionFocus)="onUsernameFocus()"
-        (ionBlur)="onUsernameBlur()">
-      </ion-input>
-    </ion-item>
-    
-    <ion-item>
-      <ion-label
-        class="labelColor"
-        position="floating"
-        [class.shrink]="isPasswordFocused || password">
-        Contraseña
-      </ion-label>
-      <ion-input
-        type="password"
-        [(ngModel)]="password"
-        name="password"
-        required
-        (ionFocus)="onPasswordFocus()"
-        (ionBlur)="onPasswordBlur()">
-      </ion-input>
-    </ion-item>
-    
-    <ion-button class="botonmio" expand="full" type="submit">Iniciar Sesión</ion-button>
-  </form>
+  <ion-card>
+    <ion-card-header>
+      <div class="logo-container-header">
+        <img src="assets/LogoRegistrApp.png" alt="Logo" class="logo-header" />
+      </div>
+    </ion-card-header>
+    <ion-card-content>
+      <form (ngSubmit)="login()">
+        <ion-item>
+          <ion-label class="labelColor" position="floating" [class.shrink]="isUsernameFocused || username">
+            Nombre de Usuario
+          </ion-label>
+          <ion-input [(ngModel)]="username" name="username" require (ionFocus)="onUsernameFocus()"(ionBlur)="onUsernameBlur()"></ion-input>
+        </ion-item>
+        
+        <ion-item>
+          <ion-label class="labelColor" position="floating" [class.shrink]="isPasswordFocused || password">
+            Contraseña
+          </ion-label>
+          <ion-input type="password" [(ngModel)]="password" name="password" required (ionFocus)="onPasswordFocus()" (ionBlur)="onPasswordBlur()"></ion-input>
+        </ion-item>    
+        <ion-button class="botonmio" expand="full" type="submit">Iniciar Sesión</ion-button>
+      </form>
+    </ion-card-content>
+  </ion-card>
   
-  <!-- Botón de registro -->
+  <!-- Botón de registro y recuperación de contraseña -->
   <ion-button class="botonmio" expand="full" (click)="goToRegister()">Registrarse</ion-button>
-  
-  <!-- Botón de recuperación de contraseña -->
   <ion-button class="botonmio" expand="full" (click)="goToResetPassword()">Recuperar Contraseña</ion-button>
 
-  <!-- Logo -->
-  <div class="logo-container">
-    <img src="assets/LogoRegistrApp.png" alt="Logo" class="logo" />
+  <!-- Overlay con spinner centrado -->
+  <div *ngIf="isLoading" class="overlay">
+    <ion-spinner name="dots"></ion-spinner>
   </div>
 </ion-content>

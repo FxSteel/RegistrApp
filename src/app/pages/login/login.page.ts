@@ -12,6 +12,7 @@ export class LoginPage {
   password: string = '';
   isUsernameFocused: boolean = false;
   isPasswordFocused: boolean = false;
+  isLoading: boolean = false;
 
   constructor(private authService: AuthService, private router: Router) {}
 
@@ -41,11 +42,15 @@ export class LoginPage {
   }
 
   login() {
-    if (this.authService.authenticate(this.username, this.password)) {
-      this.router.navigate(['/home']);
-    } else {
-      alert('Inicio de sesión fallido: usuario o contraseña incorrectos');
-    }
+    this.isLoading = true; // Mostrar el spinner
+    setTimeout(() => {
+      this.isLoading = false; // Ocultar el spinner después de 1 segundos
+      if (this.authService.authenticate(this.username, this.password)) {
+        this.router.navigate(['/home']);
+      } else {
+        alert('Inicio de sesión fallido: usuario o contraseña incorrectos');
+      }
+    }, 1000);
   }
 
   goToRegister() {

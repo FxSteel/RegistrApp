@@ -21,22 +21,27 @@
       <h2>Bienvenido {{ username }}</h2>
     </div>
 
-    <!-- Tarjeta del clima -->
-    <ion-card *ngIf="weatherData" class="weather-card">
-      <ion-card-header class="weather-card-content">
-        <ion-card-title>Clima en {{ weatherData.location.name }}</ion-card-title>
-      </ion-card-header>
-      <ion-card-content class="weather-card-content">
-        <p>Temperatura: {{ weatherData.current.temp_c }}°C</p>
-        <p>Condición: {{ weatherData.current.condition.text }}</p>
-        <img [src]="weatherData.current.condition.icon" alt="Icono del clima">
-      </ion-card-content>
-    </ion-card>
-    <div *ngIf="!weatherData">
-      <p>Cargando el clima...</p>
-    </div>
+    <!-- Contenedor de ion-slides para el carrusel -->
+    <ion-slides [options]="slideOpts" class="ion-margin-top">
+      <!-- Tarjeta de la API del clima -->
+      <ion-slide>
+        <ion-card *ngIf="weatherData" class="weather-card">
+          <ion-card-header class="weather-card-content">
+            <ion-card-title>Clima en {{ weatherData.location.name }}</ion-card-title>
+          </ion-card-header>
+          <ion-card-content class="weather-card-content">
+            <p>Temperatura: {{ weatherData.current.temp_c }}°C</p>
+            <p>Condición: {{ weatherData.current.condition.text }}</p>
+            <img [src]="weatherData.current.condition.icon" alt="Icono del clima">
+          </ion-card-content>
+        </ion-card>
+        <div *ngIf="!weatherData">
+          <p>Cargando el clima...</p>
+        </div>
+      </ion-slide>
+    </ion-slides>
 
-    <!-- Botón de Generar QR solo para profesores -->
+    <!-- Contenido existente -->
     <div *ngIf="role === 'profesor'">
       <h3>Generar código QR por asignatura</h3>
       <ion-card *ngFor="let asignatura of asignaturas">
@@ -47,8 +52,6 @@
           <ion-button class="botonmio" expand="full" (click)="generateQRCodeForAsignatura(asignatura)">
             Generar Código QR
           </ion-button>
-
-          <!-- Mostrar el código QR si se ha generado -->
           <div *ngIf="asignatura.showQRCode" class="qr-container">
             <img src="assets/qr-code.png" alt="Código QR para {{ asignatura.nombre }}" class="qr-image" />
             <ion-button class="botonmio" (click)="projectQRCode()">Proyectar QR</ion-button>
@@ -57,7 +60,6 @@
       </ion-card>
     </div>
 
-    <!-- Tarjetas de asignaturas solo para alumnos -->
     <div *ngIf="role === 'alumno'">
       <h3>Selección de ramos</h3>
       <ion-card *ngFor="let asignatura of asignaturas">
@@ -76,7 +78,6 @@
     </div>
   </div>
 
-  <!-- Logo en el pie de página, no desplazable -->
   <div class="logo-footer">
     <img src="assets/LogoRegistrApp.png" alt="Logo" class="logo" />
   </div>
