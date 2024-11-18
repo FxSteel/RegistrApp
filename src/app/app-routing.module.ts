@@ -12,8 +12,7 @@ const routes: Routes = [
   { path: 'welcome', loadChildren: () => import('./pages/welcome/welcome.module').then(m => m.WelcomePageModule) },
   { path: 'resumen-asistencia', loadChildren: () => import('./pages/resumen-asistencia/resumen-asistencia.module').then(m => m.ResumenAsistenciaPageModule), canActivate: [AuthGuard] },
   { path: 'salida', loadChildren: () => import('./pages/salida/salida.module').then( m => m.SalidaPageModule)},
-  { path: '**', loadChildren: () => import('./pages/not-found/not-found.module').then(m => m.NotFoundPageModule) }, // Página 404 personalizada  
-  
+  { path: '**', loadChildren: () => import('./pages/not-found/not-found.module').then(m => m.NotFoundPageModule) },   
 ];
 
 @NgModule({

@@ -21,27 +21,32 @@
       <h2>Bienvenido {{ username }}</h2>
     </div>
 
-    <!-- Contenedor de ion-slides para el carrusel -->
-    <ion-slides [options]="slideOpts" class="ion-margin-top">
-      <!-- Tarjeta de la API del clima -->
-      <ion-slide>
-        <ion-card *ngIf="weatherData" class="weather-card">
-          <ion-card-header class="weather-card-content">
-            <ion-card-title>Clima en {{ weatherData.location.name }}</ion-card-title>
-          </ion-card-header>
-          <ion-card-content class="weather-card-content">
-            <p>Temperatura: {{ weatherData.current.temp_c }}°C</p>
-            <p>Condición: {{ weatherData.current.condition.text }}</p>
-            <img [src]="weatherData.current.condition.icon" alt="Icono del clima">
-          </ion-card-content>
-        </ion-card>
-        <div *ngIf="!weatherData">
-          <p>Cargando el clima...</p>
-        </div>
-      </ion-slide>
-    </ion-slides>
+    <!-- Tarjeta del clima -->
+    <ion-card *ngIf="weatherData" class="weather-card">
+      <ion-card-header>
+        <ion-card-title>Clima en {{ weatherData.location.name }}</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <p>Temperatura: {{ weatherData.current.temp_c }}°C</p>
+        <p>Condición: {{ weatherData.current.condition.text }}</p>
+        <img [src]="weatherData.current.condition.icon" alt="Icono del clima">
+      </ion-card-content>
+    </ion-card>
+    <div *ngIf="!weatherData">
+      <p>Cargando el clima...</p>
+    </div>
 
-    <!-- Contenido existente -->
+    <!-- Tarjeta de contenido por definir -->
+    <ion-card class="additional-card">
+      <ion-card-header>
+        <ion-card-title>Contenido por definir</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <p>Detalles de la segunda API o contenido adicional aquí.</p>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Sección de profesor -->
     <div *ngIf="role === 'profesor'">
       <h3>Generar código QR por asignatura</h3>
       <ion-card *ngFor="let asignatura of asignaturas">
@@ -60,6 +65,22 @@
       </ion-card>
     </div>
 
+    <!-- Tarjeta de porcentaje de asistencia para alumnos -->
+    <ion-card *ngIf="role === 'alumno'" class="attendance-card">
+      <ion-card-header>
+        <ion-card-title>Asistencia General</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <div style="position: relative; display: flex; justify-content: center; align-items: center;">
+          <canvas id="attendanceChart" width="200" height="200"></canvas>
+          <div class="chart-center">
+            <h2>{{ attendancePercentage }}%</h2>
+          </div>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Sección de alumno -->
     <div *ngIf="role === 'alumno'">
       <h3>Selección de ramos</h3>
       <ion-card *ngFor="let asignatura of asignaturas">

@@ -4,7 +4,8 @@ import { Router } from '@angular/router';
 import { AlertController } from '@ionic/angular';
 import { ZXingScannerComponent } from '@zxing/ngx-scanner';
 import { WeatherService } from '../services/weather.service';
-import { HttpClient } from '@angular/common/http'; // Importa HttpClient
+import { HttpClient } from '@angular/common/http';
+import { Chart } from 'chart.js/auto';
 
 @Component({
   selector: 'app-home',
@@ -18,35 +19,38 @@ export class HomePage implements OnInit {
   showQRCode: boolean = false;
   isScanning: boolean = false;
   weatherData: any;
+  chart: any;
+  attendancePercentage: number = 85; // Porcentaje de asistencia de ejemplo
 
-  slideOpts = {
-    initialSlide: 0,
-    centeredSlides: true,
-    speed: 400,
-    loop: true,
-    slidesPerView: 1.5,
-    spaceBetween:10
-  };
-
+  // Declaración de asignaturas
   asignaturas: { nombre: string, expanded: boolean, showQRCode?: boolean }[] = [
     { nombre: 'Arquitectura de Software', expanded: false },
     { nombre: 'Prog. App Moviles', expanded: false },
     { nombre: 'Diseño de Software', expanded: false }
   ];
 
+  slideOpts = {
+    initialSlide: 0,
+    speed: 400,
+    loop: true,
+    slidesPerView: 1,
+    spaceBetween: 10
+  };
+
   constructor(
     private authService: AuthService,
     private router: Router,
     private alertController: AlertController,
     private weatherService: WeatherService,
-    private http: HttpClient // Inyecta HttpClient
+    private http: HttpClient
   ) {}
 
   ngOnInit() {
     if (this.authService.isLoggedIn()) {
       this.username = this.authService.getUsername() || '';
       this.role = this.authService.getRole();
-      this.loadWeather('Santiago'); // Llamar a la función de clima con una ciudad
+      this.loadWeather('Santiago');
+      this.createAttendanceChart();
     } else {
       this.router.navigate(['/login']);
     }
@@ -58,6 +62,36 @@ export class HomePage implements OnInit {
       error => console.error('Error al obtener el clima:', error)
     );
   }
+
+  createAttendanceChart() {
+    setTimeout(() => {
+      const ctx = document.getElementById('attendanceChart') as HTMLCanvasElement;
+      if (ctx) {
+        this.chart = new Chart(ctx, {
+          type: 'doughnut',
+          data: {
+            labels: ['Asistencia', 'Inasistencia'],
+            datasets: [
+              {
+                data: [this.attendancePercentage, 100 - this.attendancePercentage],
+                backgroundColor: ['#4caf50', '#f44336'],
+                hoverBackgroundColor: ['#66bb6a', '#e57373']
+              }
+            ]
+          },
+          options: {
+            cutout: '60%', // grosor del gráfico
+            plugins: {
+              tooltip: {
+                enabled: false
+              }
+            }
+          }
+        });
+      }
+    });
+  }
+  
 
   async logout() {
     this.authService.clear();
@@ -79,7 +113,7 @@ export class HomePage implements OnInit {
   }
 
   generateQRCodeForAsignatura(asignatura: any) {
-    asignatura.showQRCode = true; // Activar la visualización del QR dentro de la tarjeta
+    asignatura.showQRCode = true;
   }
 
   startScanning() {
@@ -95,21 +129,21 @@ export class HomePage implements OnInit {
 
   onCodeResult(result: string, asignatura: string) {
     console.log(`Código escaneado para ${asignatura}:`, result);
-  
+
     this.alertController.create({
       header: 'Escaneo Completo',
       message: `Código escaneado para ${asignatura}: ${result}`,
       buttons: ['OK']
     }).then(alert => alert.present());
-  
-    this.isScanning = false;
-  }  
 
-  toggleExpand(asignatura: any) {
-    this.asignaturas.forEach(a => {
+    this.isScanning = false;
+  }
+
+  toggleExpand(asignatura: { nombre: string, expanded: boolean, showQRCode?: boolean }) {
+    this.asignaturas.forEach((a: { nombre: string, expanded: boolean, showQRCode?: boolean }) => {
       if (a !== asignatura) {
         a.expanded = false;
-        a.showQRCode = false; // Asegura que el QR se cierre al colapsar la tarjeta
+        a.showQRCode = false;
       }
     });
     asignatura.expanded = !asignatura.expanded;
@@ -119,9 +153,9 @@ export class HomePage implements OnInit {
   onDocumentClick(event: Event) {
     const clickedElement = event.target as HTMLElement;
     if (!clickedElement.closest('ion-card')) {
-      this.asignaturas.forEach(asignatura => {
+      this.asignaturas.forEach((asignatura: { nombre: string, expanded: boolean, showQRCode?: boolean }) => {
         asignatura.expanded = false;
-        asignatura.showQRCode = false; // Cierra todas las tarjetas y el QR al hacer clic fuera de las tarjetas
+        asignatura.showQRCode = false;
       });
     }
   }
