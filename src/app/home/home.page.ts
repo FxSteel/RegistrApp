@@ -20,7 +20,7 @@ export class HomePage implements OnInit {
   isScanning: boolean = false;
   weatherData: any;
   chart: any;
-  attendancePercentage: number = 85; // Porcentaje de asistencia de ejemplo
+  attendancePercentage: number = 85; // Porcentaje de asistencia
 
   // Declaración de asignaturas
   asignaturas: { nombre: string, expanded: boolean, showQRCode?: boolean, qrCodeUrl?: string }[] = [
@@ -91,7 +91,6 @@ export class HomePage implements OnInit {
       }
     });
   }
-  
 
   async logout() {
     this.authService.clear();
@@ -113,13 +112,12 @@ export class HomePage implements OnInit {
   }
 
   generateQRCodeForAsignatura(asignatura: any) {
-    // Crear los datos únicos para el código QR
-    const qrData = `${asignatura.nombre}_${this.username}_${new Date().toISOString()}`;
-    
-    // Generar la URL del QR dinámicamente usando la API externa
-    asignatura.qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(qrData)}&size=200x200`;
-    
-    // Hacer visible el código QR
+    const qrData = {
+      username: this.username,
+      subject: asignatura.nombre,
+      timestamp: new Date().toISOString()
+    };
+    asignatura.qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(JSON.stringify(qrData))}&size=200x200`;
     asignatura.showQRCode = true;
   }
 
@@ -135,15 +133,34 @@ export class HomePage implements OnInit {
   }
 
   onCodeResult(result: string, asignatura: string) {
-    console.log(`Código escaneado para ${asignatura}:`, result);
+    try {
+      const scannedData = JSON.parse(result);
+      const username = this.username;
+      const subject = scannedData.subject || asignatura;
+      const timestamp = scannedData.timestamp || new Date().toISOString();
 
-    this.alertController.create({
-      header: 'Escaneo Completo',
-      message: `Código escaneado para ${asignatura}: ${result}`,
-      buttons: ['OK']
-    }).then(alert => alert.present());
+      this.alertController.create({
+        header: 'Escaneo Completo',
+        message: `
+          <strong>Usuario:</strong> ${username}<br>
+          <strong>Asignatura:</strong> ${subject}<br>
+          <strong>Fecha:</strong> ${new Date(timestamp).toLocaleString()}
+        `,
+        buttons: ['OK']
+      }).then(alert => alert.present());
 
-    this.isScanning = false;
+      this.authService.registerAttendance({ username, subject, timestamp }).subscribe(
+        response => console.log('Asistencia registrada:', response),
+        error => console.error('Error al registrar asistencia:', error)
+      );
+    } catch (error) {
+      console.error('Error al procesar el QR:', error);
+      this.alertController.create({
+        header: 'Error',
+        message: 'El código QR escaneado no es válido.',
+        buttons: ['OK']
+      }).then(alert => alert.present());
+    }
   }
 
   toggleExpand(asignatura: { nombre: string, expanded: boolean, showQRCode?: boolean }) {

@@ -58,7 +58,7 @@
             Generar Código QR
           </ion-button>
           <div *ngIf="asignatura.showQRCode" class="qr-container">
-            <!-- Aquí está la modificación: QR dinámico -->
+            <!-- Aquí se usa el QR dinámico -->
             <img 
               [src]="asignatura.qrCodeUrl" 
               alt="Código QR generado para {{ asignatura.nombre }}" 
@@ -102,9 +102,10 @@
         </ion-card-content>
       </ion-card>
     </div>
-  </div>
 
-  <div class="logo-footer">
-    <img src="assets/LogoRegistrApp.png" alt="Logo" class="logo" />
+    <!-- Pie de página -->
+    <div class="logo-footer">
+      <img src="assets/LogoRegistrApp.png" alt="Logo" class="logo" />
+    </div>
   </div>
 </ion-content>

@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root',
@@ -19,7 +20,7 @@ export class AuthService {
   private loggedInUser: string | null = null;
   private userRole: 'alumno' | 'profesor' | null = null;
 
-  constructor() {
+  constructor(private http: HttpClient) {
     this.loggedInUser = localStorage.getItem('loggedInUser');
     this.userRole = localStorage.getItem('userRole') as 'alumno' | 'profesor' | null;
   }
@@ -95,5 +96,11 @@ export class AuthService {
       return true;
     }
     return false;
+  }
+
+  // Método añadido para registrar asistencia
+  registerAttendance(attendanceData: { username: string; subject: string; timestamp: string }) {
+    const apiUrl = 'https://mi-servidor.com/api/attendance'; // Reemplaza con la URL de tu servidor
+    return this.http.post(apiUrl, attendanceData);
   }
 }
