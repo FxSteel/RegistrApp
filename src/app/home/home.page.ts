@@ -23,7 +23,7 @@ export class HomePage implements OnInit {
   attendancePercentage: number = 85; // Porcentaje de asistencia de ejemplo
 
   // Declaración de asignaturas
-  asignaturas: { nombre: string, expanded: boolean, showQRCode?: boolean }[] = [
+  asignaturas: { nombre: string, expanded: boolean, showQRCode?: boolean, qrCodeUrl?: string }[] = [
     { nombre: 'Arquitectura de Software', expanded: false },
     { nombre: 'Prog. App Moviles', expanded: false },
     { nombre: 'Diseño de Software', expanded: false }
@@ -113,6 +113,13 @@ export class HomePage implements OnInit {
   }
 
   generateQRCodeForAsignatura(asignatura: any) {
+    // Crear los datos únicos para el código QR
+    const qrData = `${asignatura.nombre}_${this.username}_${new Date().toISOString()}`;
+    
+    // Generar la URL del QR dinámicamente usando la API externa
+    asignatura.qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(qrData)}&size=200x200`;
+    
+    // Hacer visible el código QR
     asignatura.showQRCode = true;
   }
 

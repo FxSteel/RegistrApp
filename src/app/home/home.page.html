@@ -58,7 +58,12 @@
             Generar Código QR
           </ion-button>
           <div *ngIf="asignatura.showQRCode" class="qr-container">
-            <img src="assets/qr-code.png" alt="Código QR para {{ asignatura.nombre }}" class="qr-image" />
+            <!-- Aquí está la modificación: QR dinámico -->
+            <img 
+              [src]="asignatura.qrCodeUrl" 
+              alt="Código QR generado para {{ asignatura.nombre }}" 
+              class="qr-image" 
+            />
             <ion-button class="botonmio" (click)="projectQRCode()">Proyectar QR</ion-button>
           </div>
         </ion-card-content>
