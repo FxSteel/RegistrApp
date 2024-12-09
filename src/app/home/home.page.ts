@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, HostListener } from '@angular/core';
 import { AuthService } from '../services/auth.service';
 import { Router } from '@angular/router';
-import { AlertController } from '@ionic/angular';
+import { AlertController, ModalController } from '@ionic/angular';
 import { ZXingScannerComponent } from '@zxing/ngx-scanner';
 import { WeatherService } from '../services/weather.service';
 import { HttpClient } from '@angular/common/http';
@@ -18,9 +18,11 @@ export class HomePage implements OnInit {
   role: 'alumno' | 'profesor' | null = null;
   showQRCode: boolean = false;
   isScanning: boolean = false;
+  isBlocked: boolean = false; // Nueva variable para bloquear acción
+  selectedDate: Date | null = null; // Fecha seleccionada
   weatherData: any;
   chart: any;
-  attendancePercentage: number = 85; // Porcentaje de asistencia
+  attendancePercentage: number = 70; // Porcentaje de asistencia
 
   // Declaración de asignaturas
   asignaturas: { nombre: string, expanded: boolean, showQRCode?: boolean, qrCodeUrl?: string }[] = [
@@ -29,19 +31,12 @@ export class HomePage implements OnInit {
     { nombre: 'Diseño de Software', expanded: false }
   ];
 
-  slideOpts = {
-    initialSlide: 0,
-    speed: 400,
-    loop: true,
-    slidesPerView: 1,
-    spaceBetween: 10
-  };
-
   constructor(
     private authService: AuthService,
     private router: Router,
     private alertController: AlertController,
     private weatherService: WeatherService,
+    private modalController: ModalController,
     private http: HttpClient
   ) {}
 
@@ -80,7 +75,7 @@ export class HomePage implements OnInit {
             ]
           },
           options: {
-            cutout: '60%', // grosor del gráfico
+            cutout: '60%',
             plugins: {
               tooltip: {
                 enabled: false
@@ -107,22 +102,34 @@ export class HomePage implements OnInit {
     this.router.navigate(['/resumen-asistencia']);
   }
 
-  generateQRCode() {
-    this.showQRCode = true;
+  onDateChange(event: any) {
+    this.selectedDate = new Date(event.detail.value);
+    const currentDate = new Date();
+
+    this.isBlocked =
+      this.selectedDate.getFullYear() !== currentDate.getFullYear() ||
+      this.selectedDate.getMonth() !== currentDate.getMonth() ||
+      this.selectedDate.getDate() !== currentDate.getDate();
   }
 
-  generateQRCodeForAsignatura(asignatura: any) {
-    const qrData = {
-      username: this.username,
-      subject: asignatura.nombre,
-      timestamp: new Date().toISOString()
-    };
-    asignatura.qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(JSON.stringify(qrData))}&size=200x200`;
-    asignatura.showQRCode = true;
+  async showModal(message: string) {
+    const alert = await this.alertController.create({
+      header: 'Acción bloqueada',
+      message,
+      buttons: ['OK']
+    });
+    await alert.present();
   }
 
   startScanning() {
-    this.isScanning = true;
+    if (this.isBlocked) {
+      const message = this.selectedDate
+        ? `No puedes escanear códigos QR en la fecha seleccionada: ${this.selectedDate.toLocaleDateString()}.`
+        : 'No puedes escanear códigos QR en esta fecha.';
+      this.showModal(message);
+    } else {
+      this.isScanning = true;
+    }
   }
 
   stopScanning() {
@@ -142,9 +149,9 @@ export class HomePage implements OnInit {
       this.alertController.create({
         header: 'Escaneo Completo',
         message: `
-          <strong>Usuario:</strong> ${username}<br>
-          <strong>Asignatura:</strong> ${subject}<br>
-          <strong>Fecha:</strong> ${new Date(timestamp).toLocaleString()}
+          Usuario: ${username}
+          Asignatura: ${subject}
+          Fecha: ${new Date(timestamp).toLocaleString()}
         `,
         buttons: ['OK']
       }).then(alert => alert.present());
@@ -195,6 +202,21 @@ export class HomePage implements OnInit {
   goToProfile() {
     if (this.authService.isLoggedIn()) {
       this.router.navigate(['/profile']);
+    }
+  }
+
+  generateQRCodeForAsignatura(asignatura: any) {
+    if (!this.isBlocked) {
+      const qrData = {
+        username: this.username,
+        subject: asignatura.nombre,
+        timestamp: new Date().toISOString(),
+      };
+      asignatura.qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(JSON.stringify(qrData))}&size=200x200`;
+      asignatura.showQRCode = true;
+    } else {
+      const message = 'No puedes generar códigos QR en esta fecha.';
+      this.showModal(message);
     }
   }
 }

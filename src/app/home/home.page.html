@@ -36,39 +36,25 @@
       <p>Cargando el clima...</p>
     </div>
 
-    <!-- Tarjeta de contenido por definir -->
+    <!-- Tarjeta con el calendario -->
     <ion-card class="additional-card">
       <ion-card-header>
-        <ion-card-title>Contenido por definir</ion-card-title>
+        <ion-card-title> Calendario de clases </ion-card-title>
       </ion-card-header>
       <ion-card-content>
-        <p>Detalles de la segunda API o contenido adicional aquí.</p>
+        <ion-datetime
+          display-format="MM/YYYY"
+          picker-format="MM/YYYY"
+          (ionChange)="onDateChange($event)"
+        ></ion-datetime>
+        <p *ngIf="isBlocked && role === 'alumno'" class="blocked-message">
+          No puedes escanear códigos QR en esta fecha.
+        </p>
+        <p *ngIf="isBlocked && role === 'profesor'" class="blocked-message">
+          No puedes generar códigos QR en esta fecha.
+        </p>
       </ion-card-content>
     </ion-card>
-
-    <!-- Sección de profesor -->
-    <div *ngIf="role === 'profesor'">
-      <h3>Generar código QR por asignatura</h3>
-      <ion-card *ngFor="let asignatura of asignaturas">
-        <ion-card-header (click)="toggleExpand(asignatura)">
-          <ion-card-title>{{ asignatura.nombre }}</ion-card-title>
-        </ion-card-header>
-        <ion-card-content *ngIf="asignatura.expanded">
-          <ion-button class="botonmio" expand="full" (click)="generateQRCodeForAsignatura(asignatura)">
-            Generar Código QR
-          </ion-button>
-          <div *ngIf="asignatura.showQRCode" class="qr-container">
-            <!-- Aquí se usa el QR dinámico -->
-            <img 
-              [src]="asignatura.qrCodeUrl" 
-              alt="Código QR generado para {{ asignatura.nombre }}" 
-              class="qr-image" 
-            />
-            <ion-button class="botonmio" (click)="projectQRCode()">Proyectar QR</ion-button>
-          </div>
-        </ion-card-content>
-      </ion-card>
-    </div>
 
     <!-- Tarjeta de porcentaje de asistencia para alumnos -->
     <ion-card *ngIf="role === 'alumno'" class="attendance-card">
@@ -84,6 +70,29 @@
         </div>
       </ion-card-content>
     </ion-card>
+
+    <!-- Sección de profesor -->
+    <div *ngIf="role === 'profesor'">
+      <h3>Generar código QR por asignatura</h3>
+      <ion-card *ngFor="let asignatura of asignaturas">
+        <ion-card-header (click)="toggleExpand(asignatura)">
+          <ion-card-title>{{ asignatura.nombre }}</ion-card-title>
+        </ion-card-header>
+        <ion-card-content *ngIf="asignatura.expanded">
+          <ion-button class="botonmio" expand="full" (click)="generateQRCodeForAsignatura(asignatura)">
+            Generar Código QR
+          </ion-button>
+          <div *ngIf="asignatura.showQRCode" class="qr-container">
+            <img 
+              [src]="asignatura.qrCodeUrl" 
+              alt="Código QR generado para {{ asignatura.nombre }}" 
+              class="qr-image" 
+            />
+            <ion-button class="botonmio" (click)="projectQRCode()">Proyectar QR</ion-button>
+          </div>
+        </ion-card-content>
+      </ion-card>
+    </div>
 
     <!-- Sección de alumno -->
     <div *ngIf="role === 'alumno'">
