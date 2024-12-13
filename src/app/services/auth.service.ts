@@ -17,6 +17,7 @@ export class AuthService {
     'admin': { password: 'admin', role: 'profesor' },
     'root': { password: 'root', role: 'alumno' }
   };
+  
   private loggedInUser: string | null = null;
   private userRole: 'alumno' | 'profesor' | null = null;
 

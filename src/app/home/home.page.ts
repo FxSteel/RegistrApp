@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, HostListener } from '@angular/core';
 import { AuthService } from '../services/auth.service';
 import { Router } from '@angular/router';
-import { AlertController, ModalController } from '@ionic/angular';
+import { AlertController, ModalController, LoadingController } from '@ionic/angular';
 import { ZXingScannerComponent } from '@zxing/ngx-scanner';
 import { WeatherService } from '../services/weather.service';
 import { HttpClient } from '@angular/common/http';
@@ -18,17 +18,17 @@ export class HomePage implements OnInit {
   role: 'alumno' | 'profesor' | null = null;
   showQRCode: boolean = false;
   isScanning: boolean = false;
-  isBlocked: boolean = false; // Nueva variable para bloquear acción
-  selectedDate: Date | null = null; // Fecha seleccionada
+  isBlocked: boolean = false;
+  selectedDate: Date | null = null;
   weatherData: any;
   chart: any;
-  attendancePercentage: number = 70; // Porcentaje de asistencia
+  attendancePercentage: number = 70;
+  loading: any;
 
-  // Declaración de asignaturas
-  asignaturas: { nombre: string, expanded: boolean, showQRCode?: boolean, qrCodeUrl?: string }[] = [
-    { nombre: 'Arquitectura de Software', expanded: false },
-    { nombre: 'Prog. App Moviles', expanded: false },
-    { nombre: 'Diseño de Software', expanded: false }
+  asignaturas: { nombre: string, expanded: boolean, showQRCode?: boolean, qrCodeUrl?: string, seccion?: string, generatedQR?: string }[] = [
+    { nombre: 'Arquitectura de Software', expanded: false, seccion: 'MDY3131' },
+    { nombre: 'Prog. App Moviles', expanded: false, seccion: 'MDY2424' },
+    { nombre: 'Diseño de Software', expanded: false, seccion: 'MDY1515' }
   ];
 
   constructor(
@@ -37,7 +37,8 @@ export class HomePage implements OnInit {
     private alertController: AlertController,
     private weatherService: WeatherService,
     private modalController: ModalController,
-    private http: HttpClient
+    private http: HttpClient,
+    private loadingController: LoadingController
   ) {}
 
   ngOnInit() {
@@ -105,11 +106,9 @@ export class HomePage implements OnInit {
   onDateChange(event: any) {
     this.selectedDate = new Date(event.detail.value);
     const currentDate = new Date();
-
-    this.isBlocked =
-      this.selectedDate.getFullYear() !== currentDate.getFullYear() ||
-      this.selectedDate.getMonth() !== currentDate.getMonth() ||
-      this.selectedDate.getDate() !== currentDate.getDate();
+    this.isBlocked = this.selectedDate.getFullYear() !== currentDate.getFullYear() ||
+                     this.selectedDate.getMonth() !== currentDate.getMonth() ||
+                     this.selectedDate.getDate() !== currentDate.getDate();
   }
 
   async showModal(message: string) {
@@ -140,38 +139,54 @@ export class HomePage implements OnInit {
   }
 
   onCodeResult(result: string, asignatura: string) {
-    try {
-      const scannedData = JSON.parse(result);
-      const username = this.username;
-      const subject = scannedData.subject || asignatura;
-      const timestamp = scannedData.timestamp || new Date().toISOString();
+    const qrFormatRegex = /^([A-Z0-9]+)\|([\w\s]+)\|([\w\s]+)\|(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z})\|([0-9]+)$/;
+    if (qrFormatRegex.test(result)) {
+      const [_, seccion, asignaturaNombre, usuario, fecha, uniqueID] = result.match(qrFormatRegex) || [];
+
+      // Verificar si el código QR es único
+      const scannedQR = localStorage.getItem('scannedQR');
+      if (scannedQR === uniqueID) {
+        this.alertController.create({
+          header: 'Error',
+          message: 'Este código QR ya ha sido escaneado.',
+          buttons: ['OK']
+        }).then(alert => alert.present());
+        return;
+      }
+
+      if (asignaturaNombre !== asignatura) {
+        this.alertController.create({
+          header: 'Error',
+          message: `El QR escaneado no pertenece a la asignatura seleccionada (${asignatura}).`,
+          buttons: ['OK']
+        }).then(alert => alert.present());
+        return;
+      }
 
       this.alertController.create({
         header: 'Escaneo Completo',
-        message: `
-          Usuario: ${username}
-          Asignatura: ${subject}
-          Fecha: ${new Date(timestamp).toLocaleString()}
-        `,
+        message: `Sección: ${seccion}\nAsignatura: ${asignaturaNombre}\nUsuario: ${usuario}\nFecha: ${new Date(fecha).toLocaleString()}`,
         buttons: ['OK']
       }).then(alert => alert.present());
 
-      this.authService.registerAttendance({ username, subject, timestamp }).subscribe(
+      // Almacenar el ID del QR escaneado para evitar escaneos múltiples
+      localStorage.setItem('scannedQR', uniqueID);
+
+      this.authService.registerAttendance({ username: usuario, subject: asignaturaNombre, timestamp: fecha }).subscribe(
         response => console.log('Asistencia registrada:', response),
         error => console.error('Error al registrar asistencia:', error)
       );
-    } catch (error) {
-      console.error('Error al procesar el QR:', error);
+    } else {
       this.alertController.create({
         header: 'Error',
-        message: 'El código QR escaneado no es válido.',
+        message: 'El formato del código QR no es válido.',
         buttons: ['OK']
       }).then(alert => alert.present());
     }
   }
 
   toggleExpand(asignatura: { nombre: string, expanded: boolean, showQRCode?: boolean }) {
-    this.asignaturas.forEach((a: { nombre: string, expanded: boolean, showQRCode?: boolean }) => {
+    this.asignaturas.forEach(a => {
       if (a !== asignatura) {
         a.expanded = false;
         a.showQRCode = false;
@@ -184,9 +199,9 @@ export class HomePage implements OnInit {
   onDocumentClick(event: Event) {
     const clickedElement = event.target as HTMLElement;
     if (!clickedElement.closest('ion-card')) {
-      this.asignaturas.forEach((asignatura: { nombre: string, expanded: boolean, showQRCode?: boolean }) => {
-        asignatura.expanded = false;
-        asignatura.showQRCode = false;
+      this.asignaturas.forEach(a => {
+        a.expanded = false;
+        a.showQRCode = false;
       });
     }
   }
@@ -205,18 +220,34 @@ export class HomePage implements OnInit {
     }
   }
 
-  generateQRCodeForAsignatura(asignatura: any) {
+  async generateQRCodeForAsignatura(asignatura: any) {
     if (!this.isBlocked) {
-      const qrData = {
-        username: this.username,
-        subject: asignatura.nombre,
-        timestamp: new Date().toISOString(),
-      };
-      asignatura.qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(JSON.stringify(qrData))}&size=200x200`;
+      // Muestra el loading spinner mientras se genera el QR
+      this.loading = await this.loadingController.create({
+        message: 'Generando código QR...',
+        spinner: 'crescent',
+        cssClass: 'loading-spinner'
+      });
+      await this.loading.present();
+
+      // Genera un ID único basado en el timestamp
+      const uniqueID = `${new Date().getTime()}`;
+      
+      // Crea el QR con todos los datos, incluyendo el uniqueID
+      const qrData = `${asignatura.seccion}|${asignatura.nombre}|${this.username}|${new Date().toISOString()}|${uniqueID}`;
+      
+      // Crea la URL del código QR
+      asignatura.qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(qrData)}&size=200x200`;
+      
+      // Muestra el QR generado
       asignatura.showQRCode = true;
+      asignatura.generatedQR = uniqueID; // Guardamos el ID único para uso posterior
+
+      setTimeout(() => {
+        this.loading.dismiss();
+      }, 1000); // solo 1 segundos
     } else {
-      const message = 'No puedes generar códigos QR en esta fecha.';
-      this.showModal(message);
+      this.showModal('No puedes generar códigos QR en esta fecha.');
     }
   }
 }

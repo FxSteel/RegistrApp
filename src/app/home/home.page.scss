@@ -74,3 +74,11 @@ ion-slide {
   width: 150px;
   margin-bottom: 10px;
 }
+
+.loading-spinner {
+  --background: #bfa575;
+  --background-activated: #bfa575;
+  --background-focused: #bfa575;
+  --background-hover: #ad9b5d;
+  --color: white;
+}
